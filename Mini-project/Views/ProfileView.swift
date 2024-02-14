@@ -11,8 +11,9 @@ struct ProfileView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
+        Spacer()
         VStack(spacing: 30.0) {
-            VStack(spacing: 90.0) {
+            VStack() {
                 if let profileImageURL = profileImageURL {
                     AsyncImage(url: profileImageURL) { image in
                         image
@@ -42,22 +43,13 @@ struct ProfileView: View {
                 }
                 
                 VStack(spacing: 20.0) {
-                    HStack {
-                        Spacer()
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.largeTitle)
-                            .foregroundColor(.black)
-                        Text("Contact: " + contact)
-                            .font(.title2)
-                        Spacer()
-                    }
-                    
+                   
                     HStack {
                         Spacer()
                         Image(systemName: "envelope")
                             .font(.title)
                         Text("AppleID: " + appleID)
-                            .font(.title2)
+                            .font(.caption) 
                         Spacer()
                     }
                 }
@@ -84,6 +76,7 @@ struct ProfileView: View {
                 }
             }
             .padding(.all)
+            Spacer()
         }
         .padding()
         .onAppear {
@@ -95,7 +88,7 @@ struct ProfileView: View {
                 
                 // Fetch user's profile image URL from Google
                 if let googleUser = GIDSignIn.sharedInstance.currentUser,
-                   let profileImageUrl = googleUser.profile?.imageURL(withDimension: 100) {
+                   let profileImageUrl = googleUser.profile?.imageURL(withDimension: 50) {
                     self.profileImageURL = profileImageUrl
                 }
             }

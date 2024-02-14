@@ -21,6 +21,12 @@ class TodoListViewModel: ObservableObject {
             print("Error encoding tasks: \(error)")
         }
     }
+    
+    
+    func removeTasks(at indices: IndexSet) {
+            tasks.remove(atOffsets: indices)
+            saveTasks()
+        }
 
      func loadTasks() {
         if let data = UserDefaults.standard.data(forKey: "YourAppIdentifier.Tasks") {

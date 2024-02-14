@@ -12,8 +12,8 @@ struct TaskDetailView: View {
             
             if let contact = task.contact {
                 Text("Contact Information:")
-                Text("First Name: \(task.contact!.firstName)")
-                Text("Last Name: \(task.contact!.lastName)")
+                Text("Name: \(task.contact!.firstName) \(task.contact!.lastName)")
+//                Text("Last Name: \(task.contact!.lastName)")
                 if let phoneNumber = contact.phoneNumber?.stringValue {
                     Text("Phone Number: \(phoneNumber)")
                 }

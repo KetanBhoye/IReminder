@@ -27,8 +27,7 @@ struct ContentView: View {
             }
             
             if selectedTab == .plus{
-                AddView( todo: Task(contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel)
-                    
+                AddView( todo: Task(contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel,  selectedTab: $selectedTab)
                 Text("Add")
             }
             if selectedTab == .notification{
@@ -41,6 +40,7 @@ struct ContentView: View {
             Spacer()
             BottomBar(selectedTab: $selectedTab)
         }
+        .environmentObject(todolistviewmodel)
         .navigationBarBackButtonHidden(true)
     }
 }

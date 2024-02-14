@@ -1,21 +1,26 @@
 import SwiftUI
 
 struct TodoListView: View {
-    @ObservedObject var todolistviewmodel = TodoListViewModel()
+    @EnvironmentObject var todolistviewmodel : TodoListViewModel
+    @State var selectedTab:BottomBarSelectedTab = .home
 
     var body: some View {
         NavigationView {
             VStack {
-                List(todolistviewmodel.tasks, id: \.id) { task in
-                    NavigationLink(destination: TaskDetailView(task: task)) {
-                        Text(task.title)
-                    }
-                }
+                List {
+                                   ForEach(todolistviewmodel.tasks) { task in
+                                       NavigationLink(destination: TaskDetailView(task: task)) {
+                                           Text(task.title)
+                                       }
+                                   }
+                                   .onDelete(perform: deleteTasks)
+                               }
             }
             .navigationTitle("Dashboard ")
             .navigationBarItems(trailing:
-                NavigationLink(destination: AddView(todo: Task(contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel)) {
+                                    NavigationLink(destination: AddView(todo: Task(contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel,selectedTab: $selectedTab)) {
                     Image(systemName: "plus")
+                
                 }
             )
             .onAppear(perform: {
@@ -25,6 +30,10 @@ struct TodoListView: View {
         .environmentObject(todolistviewmodel)
         .edgesIgnoringSafeArea(.all)
     }
+    
+    func deleteTasks(at offsets: IndexSet) {
+        todolistviewmodel.removeTasks(at: offsets)
+        }
 }
 
 struct DashboardView_Previews: PreviewProvider {

@@ -12,6 +12,10 @@ struct AddView: View {
     @State var contact : ContactInfo = ContactInfo(firstName: "Jon", lastName:"Doe")
     @State private var isHovered = false
     @ObservedObject var todolistviewmodel : TodoListViewModel
+    @Environment(\.presentationMode) var presentationMode
+    
+    @Binding var selectedTab : BottomBarSelectedTab
+    
     
     // Function to save tasks to UserDefaults
 
@@ -109,7 +113,13 @@ struct AddView: View {
                     print("after adding",todo)
                     // Save tasks through the view model
                     todolistviewmodel.saveTasks()
-                    
+                    print("before wrap")
+                    if selectedTab == .plus{
+                        selectedTab = .home
+                    }
+                    else{
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 }) {
                     HStack {
                         
@@ -129,10 +139,11 @@ struct AddView: View {
         }.navigationBarTitleDisplayMode(.inline)
     }}
 
-#Preview {
-    NavigationView {
-        AddView( todo: Task(contact: ContactInfo(firstName: "test", lastName: "test")), todolistviewmodel: TodoListViewModel())
-    }
-    
-}
+//#Preview {
+//    NavigationView {
+//        @State var selected = BottomBarSelectedTab(rawValue: 0)
+//        AddView( todo: Task(contact: ContactInfo(firstName: "test", lastName: "test")), todolistviewmodel: TodoListViewModel(), selectedTab: $selected)
+//    }
+//    
+//}
 
