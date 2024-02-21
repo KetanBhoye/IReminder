@@ -14,6 +14,7 @@ struct ContentView: View {
     @ObservedObject var todolistviewmodel = TodoListViewModel()
     
     @State var selectedTab:BottomBarSelectedTab = .home
+    var notification = NotificationManager.instance
     var body: some View {
         VStack {
             if selectedTab == .home{
@@ -42,6 +43,9 @@ struct ContentView: View {
         }
         .environmentObject(todolistviewmodel)
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            notification.requestAuth()
+        }
     }
 }
 

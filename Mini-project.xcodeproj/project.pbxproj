@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C2A7DC62B85F8140062271E /* Notificationmanager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A7DC52B85F8140062271E /* Notificationmanager.swift */; };
 		2C64816F2B7BDDDC0092D497 /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C64816E2B7BDDDC0092D497 /* BottomBarView.swift */; };
 		2C6481712B7BDE510092D497 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6481702B7BDE510092D497 /* ContentView.swift */; };
 		2C6481772B7BDF050092D497 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6481762B7BDF050092D497 /* Constants.swift */; };
@@ -58,6 +59,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C2A7DC52B85F8140062271E /* Notificationmanager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notificationmanager.swift; sourceTree = "<group>"; };
 		2C64816E2B7BDDDC0092D497 /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
 		2C6481702B7BDE510092D497 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2C6481762B7BDF050092D497 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				2CBA8E482B735BFE006F749D /* UserModel.swift */,
 				2CBA8E4A2B735C10006F749D /* TaskModel.swift */,
 				2C9D00002B74E1520092DC0F /* GetContacts.swift */,
+				2C2A7DC52B85F8140062271E /* Notificationmanager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -409,6 +412,7 @@
 				2C64816F2B7BDDDC0092D497 /* BottomBarView.swift in Sources */,
 				2C9D00042B74E2540092DC0F /* ContactView.swift in Sources */,
 				2C7907322B775DEF005B4C0B /* AppButton.swift in Sources */,
+				2C2A7DC62B85F8140062271E /* Notificationmanager.swift in Sources */,
 				2C9D00012B74E1520092DC0F /* GetContacts.swift in Sources */,
 				2C79072F2B775DB8005B4C0B /* LoginSignUpViewModel.swift in Sources */,
 				2C6481772B7BDF050092D497 /* Constants.swift in Sources */,
