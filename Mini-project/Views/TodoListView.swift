@@ -10,7 +10,11 @@ struct TodoListView: View {
                 List {
                                    ForEach(todolistviewmodel.tasks) { task in
                                        NavigationLink(destination: TaskDetailView(task: task)) {
-                                           Text(task.title)
+                                           VStack(alignment: .leading){
+                                               Text(task.title).font(.title2).bold()
+                                               Text(task.description)
+                                               Text("Due: \(task.dueDate, style: .date)")
+                                           }
                                        }
                                    }
                                    .onDelete(perform: deleteTasks)

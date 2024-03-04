@@ -2,12 +2,18 @@ import Foundation
 
 class TodoListViewModel: ObservableObject {
     @Published var tasks: [Task] = []
-
+    var notification = NotificationManager.instance
     init() {
         loadTasks()
     }
 
     func addTask(_ task: Task) {
+        let notificationTitle = task.title
+        let notificationBody = task.description
+        let notificationDate = Date().addingTimeInterval(40) // 40 seconds from now
+
+        notification.scheduleNotification(title: notificationTitle, body: notificationBody, date: notificationDate)
+
         tasks.append(task)
         saveTasks()
     }
