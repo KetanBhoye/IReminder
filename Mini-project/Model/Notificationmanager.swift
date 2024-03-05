@@ -25,7 +25,7 @@ class NotificationManager{
         }
     }
     
-    func scheduleNotification(title: String, body: String, date: Date) {
+    func scheduleNotification(title: String, body: String, date: Date,id : UUID) {
         // Create notification content
         let content = UNMutableNotificationContent()
         content.title = title
@@ -51,7 +51,7 @@ class NotificationManager{
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
 
         // Create notification request
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: id.uuidString, content: content, trigger: trigger)
 
         // Schedule the notification
         let notificationCenter = UNUserNotificationCenter.current()
@@ -63,5 +63,15 @@ class NotificationManager{
             }
         }
         notificationCenter.setNotificationCategories([category])
+    }
+}
+
+
+//for in app interaction
+
+
+class NotificationDelegate : NSObject, ObservableObject, UNUserNotificationCenterDelegate{
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.badge,.banner,.sound])
     }
 }

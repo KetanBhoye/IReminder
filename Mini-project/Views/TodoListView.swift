@@ -3,6 +3,7 @@ import SwiftUI
 struct TodoListView: View {
     @EnvironmentObject var todolistviewmodel : TodoListViewModel
     @State var selectedTab:BottomBarSelectedTab = .home
+    @StateObject var delegate = NotificationDelegate()
 
     var body: some View {
         NavigationView {
@@ -22,13 +23,14 @@ struct TodoListView: View {
             }
             .navigationTitle("Dashboard ")
             .navigationBarItems(trailing:
-                                    NavigationLink(destination: AddView(todo: Task(contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel,selectedTab: $selectedTab)) {
+                                    NavigationLink(destination: AddView(todo: Task(contact: ContactInfo(firstName: "", lastName: "")), todolistviewmodel: todolistviewmodel,selectedTab: $selectedTab)) {
                     Image(systemName: "plus")
                 
                 }
             )
             .onAppear(perform: {
                 todolistviewmodel.loadTasks()
+                UNUserNotificationCenter.current().delegate = delegate
             })
         }
         .environmentObject(todolistviewmodel)

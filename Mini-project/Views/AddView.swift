@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AddView: View {
     @State var todo : Task
-    @State var contact : ContactInfo = ContactInfo(firstName: "Jon", lastName:"Doe")
+    @State var contact : ContactInfo = ContactInfo(firstName: "", lastName:"")
     @State private var isHovered = false
     @ObservedObject var todolistviewmodel : TodoListViewModel
     @Environment(\.presentationMode) var presentationMode
@@ -58,9 +58,14 @@ struct AddView: View {
                             Spacer()
                         }
                         
-                        
-                        Text("First Name: \(contact.firstName)")
-                        Text("Last Name: \(contact.lastName)")
+                        if(contact.firstName.isEmpty)
+                        {
+                            Text("No contact")
+                        }
+                        else{
+                            Text("First Name: \(contact.firstName)")
+                            Text("Last Name: \(contact.lastName)")
+                        }
                         if let phoneNumber = contact.phoneNumber?.stringValue {
                             Text("Phone Number: \(phoneNumber)")
                         }
