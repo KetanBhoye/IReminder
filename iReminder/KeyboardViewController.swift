@@ -6,7 +6,7 @@ class KeyboardViewController: UIInputViewController {
     var letterButtons = [UIButton]()
     var isCapsLockEnabled = false
     var isExtendedKeyboardEnabled = false
-
+    var deleteTimer: Timer?
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,6 +23,10 @@ class KeyboardViewController: UIInputViewController {
         let buttonHeight: CGFloat = 30 // Adjust button height as needed
         let horizontalSpacing: CGFloat = 5 // Adjust horizontal spacing as needed
         let verticalSpacing: CGFloat = 2 // Adjust vertical spacing as needed
+        
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(backspaceLongPressed(_:)))
+        longPressGestureRecognizer.minimumPressDuration = 0.2// Adjust as needed
+        view.addGestureRecognizer(longPressGestureRecognizer)
 
         // Loop through button titles to create buttons
         for (rowIndex, rowTitles) in buttonTitles.enumerated() {
@@ -92,14 +96,33 @@ class KeyboardViewController: UIInputViewController {
             }
         }
     }
+    @objc func backspaceLongPressed(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            deleteTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(deleteCharacter), userInfo: nil, repeats: true)
+        } else if gestureRecognizer.state == .ended || gestureRecognizer.state == .cancelled {
+            deleteTimer?.invalidate()
+            deleteTimer = nil
+        }
+    }
+
+    @objc func deleteCharacter() {
+        if !inpString.isEmpty {
+            inpString.removeLast()
+            textDocumentProxy.deleteBackward()
+        }
+    }
 
     @objc func letterTapped(_ sender: UIButton) {
         guard let letter = sender.title(for: .normal) else { return }
 
         if letter == "⏪" {
-            if !inpString.isEmpty {
-                inpString.removeLast()
+            if textDocumentProxy.hasText {
+                if !inpString.isEmpty{
+                    inpString.removeLast()
+                }
+                
                 textDocumentProxy.deleteBackward()
+                
             }
         } else if letter == "⬆️" {
             // Toggle caps lock
@@ -111,7 +134,7 @@ class KeyboardViewController: UIInputViewController {
             updateKeyboardLayout()
         } else if letter == "space" {
             textDocumentProxy.insertText(" ")
-        } else if letter == "Enter" {
+        } else if letter == "⮐" {
             textDocumentProxy.insertText("\n")
         } else {
             var characterToAdd = ""
