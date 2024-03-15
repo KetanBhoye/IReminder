@@ -84,7 +84,7 @@ class KeyboardViewController: UIInputViewController {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         
         // Use a unique identifier based on the type of reminder
-        let identifier = "keyboardReminder_\(type)"
+        let identifier = "keyboardReminder"
         
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
@@ -151,13 +151,14 @@ class KeyboardViewController: UIInputViewController {
             // Check if 'todo:' is typed
             if inpString.hasPrefix("todo:") {
                 // Check for specific types
-                if inpString.hasSuffix("call") {
-                    scheduleNotification(type: "call")
-                } else if inpString.hasSuffix("meet") {
-                    scheduleNotification(type: "meet")
-                } else if inpString.hasSuffix("birthday") {
-                    scheduleNotification(type: "birthday")
-                }
+//                if inpString.hasSuffix("call") {
+//                    scheduleNotification(type: "call")
+//                } else if inpString.hasSuffix("meet") {
+//                    scheduleNotification(type: "meet")
+//                } else if inpString.hasSuffix("birthday") {
+//                    scheduleNotification(type: "birthday")
+//                }
+                scheduleNotification(type: "call")
             }
         }
 
