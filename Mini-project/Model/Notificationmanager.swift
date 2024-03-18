@@ -70,8 +70,8 @@ class NotificationManager{
 //for in app interaction
 
 
-class NotificationDelegate : NSObject, ObservableObject, UNUserNotificationCenterDelegate{
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.badge,.banner,.sound])
-    }
-}
+//class NotificationDelegate : NSObject, ObservableObject, UNUserNotificationCenterDelegate{
+//    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+//        completionHandler([.badge,.banner,.sound])
+//    }
+//}

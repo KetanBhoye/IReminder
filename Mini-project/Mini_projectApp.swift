@@ -24,7 +24,7 @@ struct Mini_projectApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     @ObservedObject var todolistviewmodel = TodoListViewModel()
     
-    @State var selectedTab:BottomBarSelectedTab = .home
+    @State var selectedTab:BottomBarSelectedTab = .profile
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
@@ -54,12 +54,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         // Handle notification action here
         // You can navigate to the addTaskView or perform any other action
-        
+        print("called")
         // Example:
         if response.notification.request.identifier == "keyboardReminder" {
+            print("opened",todolistviewmodel)
             // Navigate to the addTaskView
             if let window = UIApplication.shared.windows.first {
-                window.rootViewController = UIHostingController(rootView: AddView( todo: Task(contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel,  selectedTab: $selectedTab))
+               
+                window.rootViewController = UIHostingController(rootView: AddView(todo: Task(), todolistviewmodel: todolistviewmodel, selectedTab: $selectedTab))
             }
         }
         

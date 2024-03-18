@@ -3,7 +3,7 @@ import SwiftUI
 struct TodoListView: View {
     @EnvironmentObject var todolistviewmodel : TodoListViewModel
     @State var selectedTab:BottomBarSelectedTab = .home
-    @StateObject var delegate = NotificationDelegate()
+//    @StateObject var delegate = NotificationDelegate()
 
     var body: some View {
         NavigationView {
@@ -30,7 +30,7 @@ struct TodoListView: View {
             )
             .onAppear(perform: {
                 todolistviewmodel.loadTasks()
-                UNUserNotificationCenter.current().delegate = delegate
+//                UNUserNotificationCenter.current().delegate = delegate
             })
         }
         .environmentObject(todolistviewmodel)
