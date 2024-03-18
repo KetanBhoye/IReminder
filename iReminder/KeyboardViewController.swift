@@ -7,25 +7,27 @@ class KeyboardViewController: UIInputViewController {
     var isCapsLockEnabled = false
     var isExtendedKeyboardEnabled = false
     var deleteTimer: Timer?
+    var emojiKeyboardViewController: EmojiKeyboardViewController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let buttonTitles = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
             ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-            ["a", "s", "d", "f", "g", "h", "j", "k", "l", "⬆️"],
-            ["z", "x", "c", "v", "b", "n", "m", "-", "⏪"],
-            ["!#1","🙂", "space", ".", ",", "⮐"]
+            ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+            ["⬆️", "z", "x", "c", "v", "b", "n", "m", "⏪"],
+            ["!#1", "🙂", "space", ".", ",", "⮐"]
         ]
 
         // Define button size and spacing constants
-        let buttonWidth: CGFloat = 30 // Adjust button width as needed
-        let buttonHeight: CGFloat = 30 // Adjust button height as needed
-        let horizontalSpacing: CGFloat = 5 // Adjust horizontal spacing as needed
-        let verticalSpacing: CGFloat = 2 // Adjust vertical spacing as needed
-        
+        let buttonWidth: CGFloat = 30
+        let buttonHeight: CGFloat = 30
+        let horizontalSpacing: CGFloat = 5
+        let verticalSpacing: CGFloat = 2
+
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(backspaceLongPressed(_:)))
-        longPressGestureRecognizer.minimumPressDuration = 0.2// Adjust as needed
+        longPressGestureRecognizer.minimumPressDuration = 0.2
         view.addGestureRecognizer(longPressGestureRecognizer)
 
         // Loop through button titles to create buttons
@@ -36,7 +38,7 @@ class KeyboardViewController: UIInputViewController {
                 button.sizeToFit()
                 button.translatesAutoresizingMaskIntoConstraints = false
                 button.layer.cornerRadius = 5
-                button.backgroundColor = UIColor(white: 0.9, alpha: 1.0) // Adjust color as needed
+                button.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
                 button.addTarget(self, action: #selector(letterTapped(_:)), for: .touchUpInside)
                 view.addSubview(button)
                 letterButtons.append(button)
@@ -68,7 +70,7 @@ class KeyboardViewController: UIInputViewController {
     func scheduleNotification(type: String) {
         let content = UNMutableNotificationContent()
         content.title = "iReminder"
-        
+
         // Customize notification based on type
         switch type {
         case "call":
@@ -82,10 +84,7 @@ class KeyboardViewController: UIInputViewController {
         }
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        
-        // Use a unique identifier based on the type of reminder
         let identifier = "keyboardReminder_\(type)"
-        
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
         UNUserNotificationCenter.current().add(request) { error in
@@ -96,6 +95,7 @@ class KeyboardViewController: UIInputViewController {
             }
         }
     }
+
     @objc func backspaceLongPressed(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
             deleteTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(deleteCharacter), userInfo: nil, repeats: true)
@@ -117,12 +117,10 @@ class KeyboardViewController: UIInputViewController {
 
         if letter == "⏪" {
             if textDocumentProxy.hasText {
-                if !inpString.isEmpty{
+                if !inpString.isEmpty {
                     inpString.removeLast()
                 }
-                
                 textDocumentProxy.deleteBackward()
-                
             }
         } else if letter == "⬆️" {
             // Toggle caps lock
@@ -136,6 +134,9 @@ class KeyboardViewController: UIInputViewController {
             textDocumentProxy.insertText(" ")
         } else if letter == "⮐" {
             textDocumentProxy.insertText("\n")
+        } else if letter == "🙂" {
+            // Present the emoji keyboard
+            presentEmojiKeyboard()
         } else {
             var characterToAdd = ""
             if isCapsLockEnabled {
@@ -178,7 +179,7 @@ class KeyboardViewController: UIInputViewController {
                 button.setTitle(updatedTitle, for: .normal)
             }
         }
-        
+
         // Update letter buttons for extended keyboard
         if isExtendedKeyboardEnabled {
             for (index, button) in letterButtons.enumerated() {
@@ -194,86 +195,85 @@ class KeyboardViewController: UIInputViewController {
         }
     }
 
-
     func getExtendedCharacter(for letter: String) -> String {
-        switch letter {
-        case "1":
-            return "!"
-        case "2":
-            return "@"
-        case "3":
-            return "#"
-        case "4":
-            return "$"
-        case "5":
-            return "%"
-        case "6":
-            return "^"
-        case "7":
-            return "&"
-        case "8":
-            return "*"
-        case "9":
-            return "("
-        case "0":
-            return ")"
-        case "q":
-            return "_"
-        case "w":
-            return "+"
-        case "e":
-            return "`"
-        case "r":
-            return "-"
-        case "t":
-            return "="
-        case "y":
-            return "{"
-        case "u":
-            return "}"
-        case "i":
-            return "|"
-        case "o":
-            return "["
-        case "p":
-            return "]"
-        case "a":
-            return "\\"
-        case "s":
-            return ":"
-        case "d":
-            return ";"
-        case "f":
-            return "'"
-        case "g":
-            return ","
-        case "h":
-            return "."
-        case "j":
-            return "/"
-        case "k":
-            return "<"
-        case "l":
-            return ">"
-        case "z":
-            return "?"
-        case "x":
-            return "~"
-        case "c":
-            return "¨"
-        case "v":
-            return "½"
-        case "b":
-            return "×"
-        case "n":
-            return "÷"
-        case "m":
-            return "€"
-        default:
-            return letter
-        }
-    }
-    
+         switch letter {
+         case "1":
+             return "!"
+         case "2":
+             return "@"
+         case "3":
+             return "#"
+         case "4":
+             return "$"
+         case "5":
+             return "%"
+         case "6":
+             return "^"
+         case "7":
+             return "&"
+         case "8":
+             return "*"
+         case "9":
+             return "("
+         case "0":
+             return ")"
+         case "q":
+             return "_"
+         case "w":
+             return "+"
+         case "e":
+             return "`"
+         case "r":
+             return "-"
+         case "t":
+             return "="
+         case "y":
+             return "{"
+         case "u":
+             return "}"
+         case "i":
+             return "|"
+         case "o":
+             return "["
+         case "p":
+             return "]"
+         case "a":
+             return "\\"
+         case "s":
+             return ":"
+         case "d":
+             return ";"
+         case "f":
+             return "'"
+         case "g":
+             return ","
+         case "h":
+             return "."
+         case "j":
+             return "/"
+         case "k":
+             return "<"
+         case "l":
+             return ">"
+         case "z":
+             return "?"
+         case "x":
+             return "~"
+         case "c":
+             return "¨"
+         case "v":
+             return "½"
+         case "b":
+             return "×"
+         case "n":
+             return "÷"
+         case "m":
+             return "€"
+         default:
+             return letter
+         }
+     }
+     
     func getRegularCharacter(for letter: String) -> String {
         switch letter {
         case "!":
@@ -351,5 +351,142 @@ class KeyboardViewController: UIInputViewController {
         default:
             return letter
         }
+        
+    }
+
+
+    func presentEmojiKeyboard() {
+        emojiKeyboardViewController = EmojiKeyboardViewController()
+        emojiKeyboardViewController?.emojiSelectedHandler = { [weak self] emoji in
+            self?.textDocumentProxy.insertText(emoji)
+        }
+
+        if let emojiKeyboard = emojiKeyboardViewController {
+            emojiKeyboard.modalPresentationStyle = .popover
+            emojiKeyboard.popoverPresentationController?.sourceView = view
+            emojiKeyboard.popoverPresentationController?.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+            emojiKeyboard.popoverPresentationController?.permittedArrowDirections = []
+            present(emojiKeyboard, animated: true, completion: nil)
+        }
+    }
+}
+
+
+class EmojiKeyboardViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    var emojiSelectedHandler: ((String) -> Void)?
+    var emojiCollectionView: UICollectionView!
+    var closeButton: UIButton!
+
+
+    private let emojiData = [
+        "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇",
+        "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚",
+        "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔",
+        "🤐", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "🤥",
+        "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮",
+        "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎",
+        "💼", "📈", "📊", "📝", "💻", "📅", "📎", "📌", "📋", "✉️",
+        "💡", "📚", "🗂️", "📂", "🗄️", "📑", "📊", "📉", "🗃️", "🗳️",
+        "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "💔", "❣️", "💕",
+        "💞", "💓", "💗", "💖", "💘", "💝", "💟", "❤️‍🔥", "❤️‍🩹",
+        "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎",
+        "💩", "🤡", "👻", "💀", "👽", "👾", "🤖", "🎃", "😺", "😸",
+        "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "🐶", "🐱", "🐭",
+        "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷",
+        "🐽", "🐸", "🐙", "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧",
+        "🐦", "🐤", "🐣", "🐥", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗",
+        "🐴", "🦄", "🐝", "🐛", "🦋", "🐌", "🐞", "🐜", "🦗", "🕷️",
+        "🕸️", "🦂", "🦟", "🦠", "🐢", "🐍", "🦎", "🐙", "🦑", "🦐",
+        "🦀", "🐡", "🐠", "🐟", "🐬", "🐳", "🐋", "🦈", "🐊", "🐅",
+        "🐆", "🦓", "🦍", "🦧", "🦣", "🐘", "🦛", "🦏", "🐪", "🐫",
+        "🦒", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦙", "🐐",
+        "🦌", "🐕", "🐩", "🐈", "🐓", "🦃", "🕊️", "🐇", "🐁", "🐀",
+        "🐿️", "🦔", "🐾", "🦩", "🐡", "🐲", "🦕", "🦖", "🐉", "🦧",
+        "🦣", "🦕", "🦖", "🦚", "🦦", "🦤", "🦭", "🐲", "🐊", "🐍",
+        "🐉", "🐋", "🐡", "🦢", "🦉", "🐬", "🐟", "🐳", "🐙", "🦑",
+        "🦈", "🐚", "🦀", "🐌", "🦐", "🦑", "🐠", "🐟", "🐡", "🐚"
+    ]
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupEmojiCollectionView()
+        setupCloseButton()
+    }
+
+    func setupEmojiCollectionView() {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: 40, height: 40)
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 80, right: 16)
+
+        emojiCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        emojiCollectionView.dataSource = self
+        emojiCollectionView.delegate = self
+        emojiCollectionView.backgroundColor = .systemBackground
+        emojiCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "EmojiCell")
+        view.addSubview(emojiCollectionView)
+        emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            emojiCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            emojiCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
+    func setupCloseButton() {
+        closeButton = UIButton(type: .system)
+        closeButton.setTitle("Close", for: .normal)
+        closeButton.addTarget(self, action: #selector(closeEmojiKeyboard), for: .touchUpInside)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(closeButton)
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
+            closeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+    }
+
+    @objc func closeEmojiKeyboard() {
+        dismiss(animated: true, completion: nil)
+    }
+
+    // UICollectionViewDataSource methods
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return emojiData.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCell", for: indexPath)
+        cell.backgroundColor = .systemGray5
+        cell.layer.cornerRadius = 8
+        
+        // Check if the label already exists in the cell's content view
+        if let emojiLabel = cell.contentView.subviews.first as? UILabel {
+            emojiLabel.text = emojiData[indexPath.row]
+        } else {
+            let emojiLabel = UILabel()
+            emojiLabel.text = emojiData[indexPath.row]
+            emojiLabel.font = UIFont.systemFont(ofSize: 24)
+            emojiLabel.textAlignment = .center
+            cell.contentView.addSubview(emojiLabel)
+            emojiLabel.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                emojiLabel.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
+                emojiLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
+            ])
+        }
+        
+        return cell
+    }
+
+
+    // UICollectionViewDelegate methods
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedEmoji = emojiData[indexPath.row]
+        emojiSelectedHandler?(selectedEmoji)
     }
 }

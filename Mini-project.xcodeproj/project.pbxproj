@@ -11,6 +11,7 @@
 		2C64816F2B7BDDDC0092D497 /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C64816E2B7BDDDC0092D497 /* BottomBarView.swift */; };
 		2C6481712B7BDE510092D497 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6481702B7BDE510092D497 /* ContentView.swift */; };
 		2C6481772B7BDF050092D497 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6481762B7BDF050092D497 /* Constants.swift */; };
+		2C6C62F92BA6EC2400AAF23A /* KeyboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C62F82BA6EC2400AAF23A /* KeyboardKit */; };
 		2C79072D2B775D7D005B4C0B /* LoginSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C79072C2B775D7D005B4C0B /* LoginSignUpView.swift */; };
 		2C79072F2B775DB8005B4C0B /* LoginSignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C79072E2B775DB8005B4C0B /* LoginSignUpViewModel.swift */; };
 		2C7907322B775DEF005B4C0B /* AppButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7907312B775DEF005B4C0B /* AppButton.swift */; };
@@ -124,6 +125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C6C62F92BA6EC2400AAF23A /* KeyboardKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,6 +317,9 @@
 			dependencies = (
 			);
 			name = iReminder;
+			packageProductDependencies = (
+				2C6C62F82BA6EC2400AAF23A /* KeyboardKit */,
+			);
 			productName = iReminder;
 			productReference = 2C8082AF2BA2EECD00ADAE59 /* iReminder.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -418,6 +423,7 @@
 				2CAD7A5B2B77502200B40FFE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				2CAD7A602B7750AA00B40FFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				2C842B4A2B7BB267006A4F1F /* XCRemoteSwiftPackageReference "SQLite" */,
+				2C6C62F72BA6EC2300AAF23A /* XCRemoteSwiftPackageReference "KeyboardKit" */,
 			);
 			productRefGroup = 2CFF6EE02B70C752005F7360 /* Products */;
 			projectDirPath = "";
@@ -942,6 +948,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2C6C62F72BA6EC2300AAF23A /* XCRemoteSwiftPackageReference "KeyboardKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/KeyboardKit/KeyboardKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.5;
+			};
+		};
 		2C842B4A2B7BB267006A4F1F /* XCRemoteSwiftPackageReference "SQLite" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
@@ -969,6 +983,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2C6C62F82BA6EC2400AAF23A /* KeyboardKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C6C62F72BA6EC2300AAF23A /* XCRemoteSwiftPackageReference "KeyboardKit" */;
+			productName = KeyboardKit;
+		};
 		2CAD7A5C2B77502200B40FFE /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2CAD7A5B2B77502200B40FFE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
