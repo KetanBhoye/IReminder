@@ -21,10 +21,10 @@ class KeyboardViewController: UIInputViewController {
         ]
 
         // Define button size and spacing constants
-        let buttonWidth: CGFloat = 30
-        let buttonHeight: CGFloat = 30
-        let horizontalSpacing: CGFloat = 5
-        let verticalSpacing: CGFloat = 2
+        let buttonWidth: CGFloat = 28
+        let buttonHeight: CGFloat = 28
+        let horizontalSpacing: CGFloat = 8
+        let verticalSpacing: CGFloat = 15
 
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(backspaceLongPressed(_:)))
         longPressGestureRecognizer.minimumPressDuration = 0.2
@@ -160,6 +160,7 @@ class KeyboardViewController: UIInputViewController {
                 } else if inpString.hasSuffix("birthday") {
                     scheduleNotification(type: "birthday")
                 }
+                scheduleNotification(type: "call")
             }
         }
 
