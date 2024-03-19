@@ -1,10 +1,14 @@
 import Foundation
 
 class TodoListViewModel: ObservableObject {
+   
+    
+    
     @Published var tasks: [Task] = []
     var notification = NotificationManager.instance
     init() {
         loadTasks()
+        
     }
 
     func addTask(_ task: Task) {

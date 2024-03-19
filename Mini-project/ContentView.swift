@@ -6,9 +6,47 @@
 //
 
 import SwiftUI
-
+import CallKit
+import UserNotifications
+class CallObserver: NSObject, CXCallObserverDelegate {
+     
+    let callObserver = CXCallObserver()
+    var latestMissedCall: CXCall?
+    
+    override init() {
+        super.init()
+        callObserver.setDelegate(self, queue: nil)
+    }
+    
+    
+    func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
+        if call.hasConnected {
+            print("Call was answered")
+            // Reset latestMissedCall if a call was answered
+            latestMissedCall = nil
+        } else if call.hasEnded {
+            print("Call was rejected or unanswered")
+            // Set latestMissedCall if a call was rejected or unanswered
+            latestMissedCall = call
+            // Send a notification to appear in the Notification Centre after 10 minutes
+            sendNotification()
+        }
+    }
+    
+    func sendNotification() {
+        // Code to send a notification to appear in the Notification Centre
+        let content = UNMutableNotificationContent()
+        content.title = "Remind me later"
+        content.body = "You have a missed call"
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false) // 10 minutes
+        let request = UNNotificationRequest(identifier: "callnotconn", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+    }
+}
 
 struct ContentView: View {
+    let callObserver = CallObserver() // Create an instance of CallObserver to start observing call events
     
     @State var contact : ContactInfo = ContactInfo(firstName: "Vijay", lastName: "Mali")
     @ObservedObject var todolistviewmodel = TodoListViewModel()
@@ -19,6 +57,7 @@ struct ContentView: View {
         VStack {
             if selectedTab == .home{
                 TodoListView()
+            
 //                Text("Home")
             }
             
@@ -48,10 +87,3 @@ struct ContentView: View {
         }
     }
 }
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-

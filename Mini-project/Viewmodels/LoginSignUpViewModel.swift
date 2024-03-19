@@ -8,6 +8,8 @@ class LoginSignUpViewModel: ObservableObject {
     @Published var phoneNumber = ""
     @Published var selectedCountryCode = "+91"
     @Published var path = NavigationPath()
+    
+
 
     let countryCodes = ["+1", "+44", "+91", "+81"]
 

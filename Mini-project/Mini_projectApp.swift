@@ -1,14 +1,8 @@
-//
-//  Mini_projectApp.swift
-//  Mini-project
-//
-//  Created by mini project on 05/02/24.
-//
-
 import SwiftUI
 import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
+import UserNotifications
 
 @main
 struct Mini_projectApp: App {
@@ -22,9 +16,9 @@ struct Mini_projectApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-    @ObservedObject var todolistviewmodel = TodoListViewModel()
-    
-    @State var selectedTab:BottomBarSelectedTab = .profile
+    let todolistviewmodel = TodoListViewModel()
+    @State var selectedTab: BottomBarSelectedTab = .profile
+
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
@@ -32,42 +26,41 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return true
     }
 
-    private func application(_ application: UIApplication,
+    func application(_ application: UIApplication,
                      open url: URL,
                      sourceApplication: String?,
-                     annotation: [String : Any]) -> Bool {
+                     annotation: Any) -> Bool {
         return GIDSignIn.sharedInstance.handle(url)
     }
-    
-    // Handle notifications when the app is in the foreground
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // Handle notification as needed, e.g., show an alert
-        // You can customize this part based on your app's behavior
-        completionHandler([.banner, .sound, .badge])
+
+    // Implement delegate method to handle notifications when the app is in the foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let identifier = notification.request.identifier
+        if identifier == "callnotconn" {
+            print("Notification Title: \(notification.request.content.title)")
+        }
+        completionHandler([.banner, .sound, .badge]) // You can adjust the options based on your requirements
     }
     
-    // Handle notifications when the app is in the background or terminated
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Handle notification action here
-        // You can navigate to the addTaskView or perform any other action
-        print("called")
-        // Example:
-        if response.notification.request.identifier == "keyboardReminder" {
-            print("opened",todolistviewmodel)
-            // Navigate to the addTaskView
-            if let window = UIApplication.shared.windows.first {
-               
-                window.rootViewController = UIHostingController(rootView: AddView(todo: Task(), todolistviewmodel: todolistviewmodel, selectedTab: $selectedTab))
-            }
+    // Implement delegate method to handle user's interaction with notifications
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let identifier = response.notification.request.identifier
+        
+        switch identifier {
+        case "keyboardReminder_meet":
+            print("User clicked on keyboardReminder_meet notification")
+            // Perform actions specific to this notification if needed
+        case "keyboardReminder_call":
+            print("User clicked on keyboardReminder_call notification")
+            // Perform actions specific to this notification if needed
+        case "keyboardReminder_birthday":
+            print("User clicked on keyboardReminder_birthday notification")
+            // Perform actions specific to this notification if needed
+        default:
+            print("User clicked on a notification with an unrecognized identifier")
         }
         
+        // Call the completion handler when finished processing the notification
         completionHandler()
     }
 }
-
-
-
