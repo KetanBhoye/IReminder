@@ -21,6 +21,9 @@ struct TaskDetailView: View {
         }
         .padding()
         .navigationTitle(task.title)
+        .onAppear(perform: {
+            print(task)
+        })
     }
 }
 

@@ -29,8 +29,10 @@ class NotificationManager{
         // Create notification content
         let content = UNMutableNotificationContent()
         content.title = title
-        content.body = body
+        content.body = "body"
         content.sound = UNNotificationSound.default
+        
+        print(content.title,content.body)
 
         // Define custom actions
         let snooze = UNNotificationAction(identifier: "Snooze", title: "Snooze", options: [])
@@ -64,14 +66,17 @@ class NotificationManager{
         }
         notificationCenter.setNotificationCategories([category])
     }
+    
+    
+    
 }
 
 
 //for in app interaction
 
 
-//class NotificationDelegate : NSObject, ObservableObject, UNUserNotificationCenterDelegate{
-//    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-//        completionHandler([.badge,.banner,.sound])
-//    }
-//}
+class NotificationDelegate : NSObject, ObservableObject, UNUserNotificationCenterDelegate{
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.badge,.banner,.sound])
+    }
+}
