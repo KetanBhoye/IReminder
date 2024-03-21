@@ -5,7 +5,7 @@ import ContactsUI
 
 struct AddView: View {
     var reminderTypes = ["Birthday", "Meeting", "Call", "Custom"]
-    @State private var selectedReminderType = 0
+    @State var selectedReminderType = 0
     @State var todo: Task
     @ObservedObject var todolistviewmodel : TodoListViewModel
     @State var contact: ContactInfo = ContactInfo(firstName: "", lastName: "")
@@ -14,7 +14,8 @@ struct AddView: View {
     
 var body: some View {
     
-       
+    
+    
         VStack(alignment: .leading, spacing: 20.0) {
             HStack {
                 Text("Add ToDo")
@@ -27,6 +28,7 @@ var body: some View {
 
             // Picker for selecting reminder type
             Picker(selection: $selectedReminderType, label: Text("Reminder Type")) {
+                
                 ForEach(0..<reminderTypes.count) {
                     Text(self.reminderTypes[$0])
                 }
@@ -52,19 +54,38 @@ var body: some View {
                                 todo.type = 0 // Set default value if needed
                             }
                         }
+            .onAppear(){
+                switch selectedReminderType {
+                case 0: // Birthday Reminder
+                    todo.type = 1
+
+                case 1: // Meeting Reminder
+                    todo.type = 2
+
+                case 2: // Call Reminder
+                    todo.type = 3
+
+                case 3: // Custom Reminder
+                    todo.type = 4
+
+                default:
+                    todo.type = 0 // Set default value if needed
+                }
+            }
 
             // Specific input fields based on selected reminder type
-            switch selectedReminderType {
-            case 0: // Birthday Reminder{
+            
+            switch todo.type {
+            case 1: // Birthday Reminder{
                 BirthdayReminderInputView(todo: $todo,contact: $contact)
 
-            case 1: // Meeting Reminder
+            case 2: // Meeting Reminder
                 MeetingReminderInputView(todo: $todo,contact: $contact)
 
-            case 2: // Call Reminder
+            case 3: // Call Reminder
                 CallReminderInputView(todo: $todo,contact: $contact)
 
-            case 3: // Custom Reminder
+            case 4: // Custom Reminder
                 CustomReminderInputView(todo: $todo)
 
             default:
