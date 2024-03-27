@@ -84,8 +84,12 @@ class FakeAutocompleteProvider: AutocompleteProvider {
     func removeIgnoredWord(_ word: String) {}
     func unlearnWord(_ word: String) {}
     
+
+    
     func autocompleteSuggestions(for text: String) async throws -> [Autocomplete.Suggestion] {
         guard text.count > 0 else { return [] }
+        
+       
         
         print("User typed: \(text)")
         

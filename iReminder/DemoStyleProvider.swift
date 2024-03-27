@@ -68,7 +68,7 @@ private extension KeyboardAction {
     
     var isRocket: Bool {
         switch self {
-        case .character(let char): char == "🚀"
+        case .character(let char): char == "🙂"
         default: false
         }
     }
