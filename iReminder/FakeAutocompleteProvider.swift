@@ -9,6 +9,7 @@
 import Foundation
 import KeyboardKit
 import UserNotifications
+import UIKit
 
 /**
  This fake autocomplete provider is used in the non-pro demo,
@@ -17,6 +18,8 @@ import UserNotifications
 
 class NotificationManager {
     static let shared = NotificationManager()
+    
+    var etc = KeyboardViewController()
     
     private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
     
@@ -93,6 +96,12 @@ class FakeAutocompleteProvider: AutocompleteProvider {
         
         print("User typed: \(text)")
         
+        if text == "🙂" {
+//            KeyboardViewController.showemojikeyboard.toggle()
+                   // Present emoji keyboard
+            
+               }
+        
         let suggestions = fakeSuggestions(for: text)
         
         // Schedule notification based on user's typing
@@ -117,3 +126,5 @@ private extension FakeAutocompleteProvider {
         ]
     }
 }
+
+
