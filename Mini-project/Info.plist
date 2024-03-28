@@ -12,6 +12,12 @@
 				<string>com.googleusercontent.apps.145413594789-565p9c91ftkca72va18he5n2lt1c0vir</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>whatsapp</string>
+		</dict>
 	</array>
 </dict>
 </plist>

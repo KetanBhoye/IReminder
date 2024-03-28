@@ -1,6 +1,8 @@
 import SwiftUI
 import Foundation
 import UIKit
+import MessageUI
+import Combine
 
 struct TaskDetailView: View {
     var task: Task
@@ -112,10 +114,52 @@ struct BirthdayView: View {
     }
 }
 
+class ViewController: UIViewController, MFMailComposeViewControllerDelegate, ObservableObject {
+    @Published var isShowingMailAlert = false
+    var completionHandler: ((Bool) -> Void)?
+
+    func sendEmail(recipient: [String], text: String, completion: @escaping (Bool) -> Void) {
+        completionHandler = completion
+
+        guard MFMailComposeViewController.canSendMail() else {
+            // Show an alert or handle the failure appropriately
+            print("could not send the email")
+            completion(false)
+            return
+        }
+
+        let mailComposeViewController = MFMailComposeViewController()
+        mailComposeViewController.mailComposeDelegate = self
+        mailComposeViewController.setToRecipients(recipient)
+        mailComposeViewController.setMessageBody(text, isHTML: false)
+
+        UIApplication.shared.windows.first?.rootViewController?.present(mailComposeViewController, animated: true, completion: nil)
+    }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        switch result {
+        case .sent:
+            print("Email sent successfully")
+            isShowingMailAlert = true
+            completionHandler?(true)
+        case .cancelled, .failed:
+            print("Email sending cancelled or failed")
+            completionHandler?(false)
+        default:
+            break
+        }
+
+        // Dismiss the mail compose view controller
+        controller.dismiss(animated: true)
+    }
+}
+
+
 // Separate View for Meeting Task
 struct MeetingView: View {
     var task: Task
-    
+    @StateObject private var viewController = ViewController()
+
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
             if !task.link.isEmpty {
@@ -129,7 +173,7 @@ struct MeetingView: View {
                         .multilineTextAlignment(.center)
                 }
             }
-            
+
             if !task.mail.isEmpty {
                 VStack(alignment: .center, spacing: 5) {
                     Text("Email")
@@ -141,9 +185,15 @@ struct MeetingView: View {
                         .multilineTextAlignment(.center)
                 }
             }
+
             Spacer()
+
             Button(action: {
-                // Action to send email to participants
+                viewController.sendEmail(recipient: ["saurabhrajopadhye26@gmail.com"], text: "Your message body") { success in
+                    if success {
+                        print("Email sent successfully")
+                    }
+                }
             }) {
                 Text("Send Email to Participants")
                     .foregroundColor(.black)
@@ -152,6 +202,9 @@ struct MeetingView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .alert(isPresented: $viewController.isShowingMailAlert) {
+            Alert(title: Text("Email Sent"), message: Text("Email sent successfully"), dismissButton: .default(Text("OK")))
+        }
     }
 }
 
@@ -196,10 +249,15 @@ struct CallView: View {
                     .padding()
                     .background(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
             }
+            
+            SendView(task: task)
         }
         .frame(maxWidth: .infinity)
     }
 }
+
+
+
 
 
 // Separate View for Custom Task
