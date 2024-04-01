@@ -29,12 +29,12 @@ class KeyboardViewController: KeyboardInputViewController {
         /// The demo handler has custom code for tapping and
         /// long pressing image actions.
         services.actionHandler = DemoActionHandler(
-            controller: self,
-            keyboardContext: state.keyboardContext,
-            keyboardBehavior: services.keyboardBehavior,
-            autocompleteContext: state.autocompleteContext,
-            feedbackConfiguration: state.feedbackConfiguration,
-            spaceDragGestureHandler: services.spaceDragGestureHandler)
+                controller: self,
+                keyboardContext: state.keyboardContext,
+                keyboardBehavior: services.keyboardBehavior,
+                autocompleteContext: state.autocompleteContext,
+                feedbackConfiguration: state.feedbackConfiguration,
+                spaceDragGestureHandler: services.spaceDragGestureHandler)
         
         /// 💡 Setup a fake autocomplete provider.
         ///
@@ -118,7 +118,7 @@ class KeyboardViewController: KeyboardInputViewController {
     /// Here, we just create a standard system keyboard like
     /// the library does it, just to show how it's done. You
     /// can customize anything you want.
-    /// 
+    ///
     ///
     
     
@@ -132,15 +132,24 @@ class KeyboardViewController: KeyboardInputViewController {
                 state: controller.state,
                 services: controller.services,
                 buttonContent: { $0.view },
-                buttonView: { $0.view },
+                buttonView: { $0.view.scaleEffect(0.70) },
                 emojiKeyboard: { $0.view },
-                toolbar: { $0.view }
+                toolbar: {_ in 
+                    HStack {
+                        
+                        Button(action: {
+                            self.presentEmojiKeyboard()
+                        }) {
+                            Text("🙂")
+                        }
+                        Spacer()
+                    }.padding(5)
+                }
             )
             // .autocorrectionDisabled()
         }
     }
 }
-
 // MARK: - EmojiKeyboard Integration
 
 extension KeyboardViewController {

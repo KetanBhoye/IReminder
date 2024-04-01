@@ -15,11 +15,14 @@ import KeyboardKit
 class DemoLayoutProvider: StandardKeyboardLayoutProvider {
 
     override func keyboardLayout(for context: KeyboardContext) -> KeyboardLayout {
+
         let layout = super.keyboardLayout(for: context)
         layout.tryInsertRocketButton()
         layout.tryInsertLocaleSwitcher(for: context)
         return layout
     }
+    
+    
 }
 
 private extension KeyboardLayout {

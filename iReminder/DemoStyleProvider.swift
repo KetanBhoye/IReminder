@@ -18,12 +18,7 @@ import SwiftUI
  */
 class DemoStyleProvider: StandardKeyboardStyleProvider {
     
-    override func buttonFontSize(
-        for action: KeyboardAction
-    ) -> CGFloat {
-        let standard = super.buttonFontSize(for: action)
-        return action.isRocket ? 1.8 * standard : standard
-    }
+  
     
 //    override func buttonStyle(
 //        for action: KeyboardAction,
