@@ -8,9 +8,32 @@
 
 import KeyboardKit
 import SwiftUI
+import Contacts
 
 
+struct ContactListView: View {
+    var contacts: [String] // Assuming contacts are represented by strings
+    var didSelectContact: (String) -> Void // Callback to handle contact selection
 
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(contacts, id: \.self) { contact in
+                    Button(action: {
+                        didSelectContact(contact)
+                    }) {
+                        Text(contact)
+                            .padding(8)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                }
+            }
+            .padding(.horizontal, 10)
+        }
+    }
+}
 /**
  This keyboard demonstrates how to setup KeyboardKit and how
  to customize the standard configuration.
@@ -19,23 +42,54 @@ import SwiftUI
  ("Settings/General/Keyboards"). It needs full access to get
  access to features like haptic feedback.
  */
-class KeyboardViewController: KeyboardInputViewController {
+class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProviderDelegate {
 
     @State var showemojikeyboard = false
+    var contacts = [String]() // Will hold the fetched contacts data
+     var searchText = ""
+    
+    
+
+    
+    func didChangeText(_ searchText: String) {
+            self.searchText = searchText
+            do {
+                contacts = try getMatchingContacts(searchText: searchText)
+            } catch {
+                print("Error fetching matching contacts: \(error.localizedDescription)")
+            }
+        
+        print(contacts)
+        }
+    
+    
+    
+    func fetchContacts() {
+        let contactStore = CNContactStore()
+        let keys = [CNContactGivenNameKey, CNContactFamilyNameKey]
+        let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
+        
+        do {
+            try contactStore.enumerateContacts(with: request) { (contact, _) in
+                let fullName = "\(contact.givenName) \(contact.familyName)"
+                self.contacts.append(fullName)
+            }
+        } catch {
+            print("Error fetching contacts: \(error.localizedDescription)")
+        }
+    }
     
     /// This function is called when the controller loads.
     ///
     /// Here, we make demo-specific service keyboard configs.
     override func viewDidLoad() {
-        
+        fetchContacts()
         /// 💡 Setup a demo-specific action handler.
         ///
         /// The demo handler has custom code for tapping and
         /// long pressing image actions.
         ///
-        if showemojikeyboard {
-            presentEmojiKeyboard()
-        }
+  
         
         services.actionHandler = DemoActionHandler(
                 controller: self,
@@ -117,9 +171,31 @@ class KeyboardViewController: KeyboardInputViewController {
         /// 💡 Call super to perform the base initialization.
         super.viewDidLoad()
         
+        let autocompleteProvider = FakeAutocompleteProvider(context: state.autocompleteContext)
+            autocompleteProvider.delegate = self
+            services.autocompleteProvider = autocompleteProvider
+        
         
         
     }
+    
+    private func getMatchingContacts(searchText: String) throws -> [String] {
+           var matchingContacts: [String] = []
+
+           let predicate = CNContact.predicateForContacts(matchingName: searchText)
+           let keysToFetch = [CNContactGivenNameKey, CNContactFamilyNameKey] as [CNKeyDescriptor]
+
+           let contactStore = CNContactStore()
+           let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keysToFetch)
+
+           for contact in contacts {
+               let fullName = "\(contact.givenName) \(contact.familyName)"
+               matchingContacts.append(fullName)
+           }
+
+           return matchingContacts
+       }
+
 
     /// This function is called whenever the keyboard should
     /// be created or updated.
@@ -146,6 +222,7 @@ class KeyboardViewController: KeyboardInputViewController {
                 toolbar: {_ in 
                     HStack {
                         
+                        
                         Button(action: {
                             self.presentEmojiKeyboard()
                         }) {
@@ -153,11 +230,18 @@ class KeyboardViewController: KeyboardInputViewController {
                         }
                         Spacer()
                     }.padding(5)
+                    
+                    ContactListView(contacts: self.contacts) { contact in
+                                                print("Selected contact: \(contact)")
+                                            }
+                    
+
                 }
             )
             // .autocorrectionDisabled()
         }
     }
+    
+    
 }
 // MARK: - EmojiKeyboard Integration
-

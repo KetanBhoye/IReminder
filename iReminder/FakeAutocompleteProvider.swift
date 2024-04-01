@@ -15,7 +15,12 @@ import Contacts
  to show fake suggestions while typing.
  */
 
+
+
+
 class NotificationManager {
+    
+    
     static let shared = NotificationManager()
     
     var etc = KeyboardViewController()
@@ -69,9 +74,15 @@ class NotificationManager {
 
 }
 
-
+protocol FakeAutocompleteProviderDelegate: AnyObject {
+    func didChangeText(_ text: String)
+}
 
 class FakeAutocompleteProvider: AutocompleteProvider {
+    
+
+    weak var delegate: FakeAutocompleteProviderDelegate?
+
     
     init(context: AutocompleteContext) {
         self.context = context
@@ -86,6 +97,7 @@ class FakeAutocompleteProvider: AutocompleteProvider {
     var canLearnWords: Bool { false }
     var ignoredWords: [String] = []
     var learnedWords: [String] = []
+ 
     
     func hasIgnoredWord(_ word: String) -> Bool { false }
     func hasLearnedWord(_ word: String) -> Bool { false }
@@ -96,6 +108,8 @@ class FakeAutocompleteProvider: AutocompleteProvider {
     
     func autocompleteSuggestions(for text: String) async throws -> [Autocomplete.Suggestion] {
         guard text.count > 0 else { return [] }
+        
+        delegate?.didChangeText(text)
         
         // Check if text starts with "@" and extract the name
         if text.first == "@" {

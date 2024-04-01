@@ -42,6 +42,7 @@
 		2CC6B5A42B7C9E9F00A32C0F /* MissedRemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC6B5A32B7C9E9F00A32C0F /* MissedRemindersView.swift */; };
 		2CCAC7C62B74DCBC0077DDC7 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCAC7C52B74DCBC0077DDC7 /* AddTaskView.swift */; };
 		2CCAC7C82B74DD600077DDC7 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCAC7C72B74DD600077DDC7 /* TaskDetailView.swift */; };
+		2CDD12D02BBA6C2D0087BF62 /* KeyboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2CDD12CF2BBA6C2D0087BF62 /* KeyboardKit */; };
 		2CFF6EE32B70C752005F7360 /* Mini_projectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFF6EE22B70C752005F7360 /* Mini_projectApp.swift */; };
 		2CFF6EE52B70C752005F7360 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFF6EE42B70C752005F7360 /* MainView.swift */; };
 		2CFF6EE72B70C755005F7360 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2CFF6EE62B70C755005F7360 /* Assets.xcassets */; };
@@ -147,6 +148,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CDD12D02BBA6C2D0087BF62 /* KeyboardKit in Frameworks */,
 				2CAD7A5D2B77502200B40FFE /* GoogleSignIn in Frameworks */,
 				2CAD7A622B7750AA00B40FFE /* FirebaseAuth in Frameworks */,
 				2CAD7A5F2B77502200B40FFE /* GoogleSignInSwift in Frameworks */,
@@ -364,6 +366,7 @@
 				2CAD7A5C2B77502200B40FFE /* GoogleSignIn */,
 				2CAD7A5E2B77502200B40FFE /* GoogleSignInSwift */,
 				2CAD7A612B7750AA00B40FFE /* FirebaseAuth */,
+				2CDD12CF2BBA6C2D0087BF62 /* KeyboardKit */,
 			);
 			productName = "Mini-project";
 			productReference = 2CFF6EDF2B70C752005F7360 /* Mini-project.app */;
@@ -1030,6 +1033,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2CAD7A602B7750AA00B40FFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		2CDD12CF2BBA6C2D0087BF62 /* KeyboardKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C6C62F72BA6EC2300AAF23A /* XCRemoteSwiftPackageReference "KeyboardKit" */;
+			productName = KeyboardKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
