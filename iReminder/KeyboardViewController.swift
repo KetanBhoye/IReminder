@@ -229,12 +229,13 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                             Text("🙂")
                         }
                         Spacer()
+                        ContactListView(contacts: self.contacts) { contact in
+                                                    print("Selected contact: \(contact)")
+                                                }
+                        
                     }.padding(5)
                     
-                    ContactListView(contacts: self.contacts) { contact in
-                                                print("Selected contact: \(contact)")
-                                            }
-                    
+                   
 
                 }
             )
