@@ -98,7 +98,7 @@ var body: some View {
             Button(action: {
                 // Add your action here
                 print("Yeahhhh!!")
-                print(todo.title)
+                print(todo.type)
                 todo.contact = contact
                 print(contact)
                 todolistviewmodel.addTask(todo)

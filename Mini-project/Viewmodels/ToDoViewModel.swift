@@ -29,12 +29,14 @@ class TodoListViewModel: ObservableObject {
         let notificationTitle = task.title
 
         let notificationBody = task.description
-
+        
+//        print("this is add task");
+//        print(task.type)
         
 
         if let notificationDate = task.reminderDate {
 
-            notification.scheduleNotification(title: notificationTitle, body: notificationBody, date: notificationDate, id: task.id)
+            notification.scheduleNotification(title: notificationTitle, body: notificationBody, date: notificationDate, id: task.id,task: task)
 
         } else {
 

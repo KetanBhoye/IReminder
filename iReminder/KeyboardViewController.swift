@@ -9,6 +9,8 @@
 import KeyboardKit
 import SwiftUI
 
+
+
 /**
  This keyboard demonstrates how to setup KeyboardKit and how
  to customize the standard configuration.
@@ -19,6 +21,8 @@ import SwiftUI
  */
 class KeyboardViewController: KeyboardInputViewController {
 
+    @State var showemojikeyboard = false
+    
     /// This function is called when the controller loads.
     ///
     /// Here, we make demo-specific service keyboard configs.
@@ -28,6 +32,11 @@ class KeyboardViewController: KeyboardInputViewController {
         ///
         /// The demo handler has custom code for tapping and
         /// long pressing image actions.
+        ///
+        if showemojikeyboard {
+            presentEmojiKeyboard()
+        }
+        
         services.actionHandler = DemoActionHandler(
                 controller: self,
                 keyboardContext: state.keyboardContext,
@@ -98,7 +107,7 @@ class KeyboardViewController: KeyboardInputViewController {
         /// a rocket sound when a rocket button is tapped.
         state.feedbackConfiguration.isHapticFeedbackEnabled = true
         state.feedbackConfiguration.audio.actions = [
-            .init(action: .character("🙂"), feedback: .custom(id: 1303))
+            .init(action: .character("🙂"), feedback: .none)
         ]
         
         
@@ -152,114 +161,3 @@ class KeyboardViewController: KeyboardInputViewController {
 }
 // MARK: - EmojiKeyboard Integration
 
-extension KeyboardViewController {
-    class EmojiKeyboardViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-        var emojiSelectedHandler: ((String) -> Void)?
-        var emojiCollectionView: UICollectionView!
-        var closeButton: UIButton!
-
-        private let emojiData = [
-            "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇",
-            "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚",
-            "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔",
-            "🤐", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "🤥",
-            "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮",
-            "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎",
-            // ... (existing emoji data) ...
-        ]
-
-        override func viewDidLoad() {
-            super.viewDidLoad()
-
-            setupEmojiCollectionView()
-            setupCloseButton()
-        }
-
-        func setupEmojiCollectionView() {
-            let layout = UICollectionViewFlowLayout()
-            layout.scrollDirection = .vertical
-            layout.itemSize = CGSize(width: 40, height: 40)
-            layout.minimumLineSpacing = 8
-            layout.minimumInteritemSpacing = 8
-            layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 80, right: 16)
-
-            emojiCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-            emojiCollectionView.dataSource = self
-            emojiCollectionView.delegate = self
-            emojiCollectionView.backgroundColor = .systemBackground
-            emojiCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "EmojiCell")
-            view.addSubview(emojiCollectionView)
-            emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                emojiCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
-                emojiCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                emojiCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                emojiCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
-        }
-
-        func setupCloseButton() {
-            closeButton = UIButton(type: .system)
-            closeButton.setTitle("Close", for: .normal)
-            closeButton.addTarget(self, action: #selector(closeEmojiKeyboard), for: .touchUpInside)
-            closeButton.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(closeButton)
-            NSLayoutConstraint.activate([
-                closeButton.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
-                closeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-            ])
-        }
-
-        @objc func closeEmojiKeyboard() {
-            dismiss(animated: true, completion: nil)
-        }
-
-        // UICollectionViewDataSource methods
-        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return emojiData.count
-        }
-
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCell", for: indexPath)
-            cell.backgroundColor = .systemGray5
-            cell.layer.cornerRadius = 8
-
-            // Check if the label already exists in the cell's content view
-            if let emojiLabel = cell.contentView.subviews.first as? UILabel {
-                emojiLabel.text = emojiData[indexPath.row]
-            } else {
-                let emojiLabel = UILabel()
-                emojiLabel.text = emojiData[indexPath.row]
-                emojiLabel.font = UIFont.systemFont(ofSize: 24)
-                emojiLabel.textAlignment = .center
-                cell.contentView.addSubview(emojiLabel)
-                emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-                NSLayoutConstraint.activate([
-                    emojiLabel.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
-                    emojiLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
-                ])
-            }
-
-            return cell
-        }
-
-        // UICollectionViewDelegate methods
-        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            let selectedEmoji = emojiData[indexPath.row]
-            emojiSelectedHandler?(selectedEmoji)
-        }
-    }
-
-    func presentEmojiKeyboard() {
-        let emojiKeyboardViewController = EmojiKeyboardViewController()
-        emojiKeyboardViewController.emojiSelectedHandler = { [weak self] emoji in
-            self?.textDocumentProxy.insertText(emoji)
-        }
-
-        emojiKeyboardViewController.modalPresentationStyle = .popover
-        emojiKeyboardViewController.popoverPresentationController?.sourceView = view
-        emojiKeyboardViewController.popoverPresentationController?.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
-        emojiKeyboardViewController.popoverPresentationController?.permittedArrowDirections = []
-        present(emojiKeyboardViewController, animated: true, completion: nil)
-    }
-}

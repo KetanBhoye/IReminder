@@ -18,6 +18,8 @@ import Contacts
 class NotificationManager {
     static let shared = NotificationManager()
     
+    var etc = KeyboardViewController()
+    
     private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
     
     private init() {}
@@ -104,6 +106,12 @@ class FakeAutocompleteProvider: AutocompleteProvider {
         
         //print("User typed: \(text)")
         
+        if text == "🙂" {
+//            KeyboardViewController.showemojikeyboard.toggle()
+                   // Present emoji keyboard
+            
+               }
+        
         let suggestions = fakeSuggestions(for: text)
         
         // Schedule notification based on user's typing
@@ -153,3 +161,5 @@ private extension FakeAutocompleteProvider {
         ]
     }
 }
+
+

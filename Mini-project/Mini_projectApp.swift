@@ -41,6 +41,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         if identifier == "callnotconn" {
             print("Notification Title: \(notification.request.content.title)")
         }
+        
 
         completionHandler([.banner, .sound, .badge]) // You can adjust the options based on your requirements
     }
@@ -48,6 +49,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // Implement delegate method to handle user's interaction with notifications
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let identifier = response.notification.request.identifier
+        let task = response.notification.request.content.userInfo
 
         switch identifier {
         case "keyboardReminder_meet":
@@ -70,6 +72,71 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             let rootViewController = UIApplication.shared.windows.first?.rootViewController
             let addView = AddView(selectedReminderType: 0,todo: Task(type: 1, contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel, selectedTab: $selectedTab)
             rootViewController?.present(UIHostingController(rootView: addView), animated: true)
+            
+        case "Call":
+            print("User clicked on call notification")
+            // Code to open BirthdayReminderInputView
+            let rootViewController = UIApplication.shared.windows.first?.rootViewController
+            if let task1 = handleNotification(userInfo: task){
+//                
+//                if let phoneNumber = task1.contact?.phoneNumber?.stringValue, !phoneNumber.isEmpty {
+//                    guard let number = URL(string: "tel://" + phoneNumber) else { return }
+//                    UIApplication.shared.open(number)
+//                }
+                let url = URL(string: "whatsapp://send?phone=\(task1.contact?.phoneNumber)&text=Hello")!
+                if UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    // WhatsApp is not installed
+                    // You can handle this case as per your app's requirement
+                    print("WhatsApp is not installed on this device.")
+                }
+            }
+            else {
+                print("Error in fetching the task from notifiaction")
+            }
+            
+        case "Birthday":
+            print("User clicked on call notification")
+            // Code to open BirthdayReminderInputView
+            let rootViewController = UIApplication.shared.windows.first?.rootViewController
+            if let task1 = handleNotification(userInfo: task){
+                
+                let addView = TaskDetailView(task: task1)
+                rootViewController?.present(UIHostingController(rootView: addView), animated: true)
+            }
+            else {
+                print("Error in fetching the task from notifiaction")
+            }
+            
+        case "Meet":
+            print("User clicked on call notification")
+            // Code to open BirthdayReminderInputView
+            let rootViewController = UIApplication.shared.windows.first?.rootViewController
+            if let task1 = handleNotification(userInfo: task){
+                
+                let addView = MeetingView(task: task1)
+                
+            }
+            else {
+                print("Error in fetching the task from notifiaction")
+            }
+        case "Custom":
+            print("User clicked on call notification")
+            // Code to open BirthdayReminderInputView
+            let rootViewController = UIApplication.shared.windows.first?.rootViewController
+            if let task1 = handleNotification(userInfo: task){
+                
+                let addView = TaskDetailView(task: task1)
+                rootViewController?.present(UIHostingController(rootView: addView), animated: true)
+                rootViewController?.modalPresentationStyle = .fullScreen
+            }
+            else {
+                print("Error in fetching the task from notifiaction")
+            }
+            
+            
+        
 
         default:
             print("User clicked on a notification with an unrecognized identifier")
