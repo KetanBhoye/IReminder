@@ -18,61 +18,6 @@ import Contacts
 
 
 
-class NotificationManager {
-    
-    
-    static let shared = NotificationManager()
-    
-    var etc = KeyboardViewController()
-    
-    private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
-    
-    private init() {}
-    
-    func requestNotificationAuthorization() {
-        UNUserNotificationCenter.current().requestAuthorization(options: options) { granted, error in
-            if granted {
-                print("Notification authorization granted.")
-            } else {
-                print("Notification authorization denied.")
-            }
-        }
-    }
-    
-    func scheduleNotification(type: String, contactName: String?, contactNumber: String?) {
-        let content = UNMutableNotificationContent()
-        content.title = "iReminder"
-        
-        // Customize notification based on type
-        switch type {
-        case "call":
-            if let contactName = contactName, !contactName.isEmpty {
-                content.body = "Call \(contactName) at \(contactNumber ?? "their number")"
-            } else {
-                content.body = "Call reminder"
-            }
-        case "meet":
-            content.body = "Meeting reminder"
-        case "birthday":
-            content.body = "Birthday reminder"
-        default:
-            content.body = "Reminder"
-        }
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let identifier = "keyboardReminder_\(type)"
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error scheduling notification: \(error)")
-            } else {
-                print("Notification scheduled successfully.")
-            }
-        }
-    }
-
-}
 
 protocol FakeAutocompleteProviderDelegate: AnyObject {
     func didChangeText(_ text: String)
@@ -86,7 +31,7 @@ class FakeAutocompleteProvider: AutocompleteProvider {
     
     init(context: AutocompleteContext) {
         self.context = context
-        NotificationManager.shared.requestNotificationAuthorization()
+      //  NotificationManager.shared.requestNotificationAuthorization()
     }
     
     private var context: AutocompleteContext
@@ -111,31 +56,8 @@ class FakeAutocompleteProvider: AutocompleteProvider {
         
         delegate?.didChangeText(text)
         
-        // Check if text starts with "@" and extract the name
-        if text.first == "@" {
-            let namePrefix = String(text.dropFirst())
-            let contacts = try getMatchingContacts(for: namePrefix)
-            return contacts.map { Autocomplete.Suggestion(text: $0.fullName, subtitle: $0.contactNumber) }
-        }
-        
-        //print("User typed: \(text)")
-        
-        if text == "🙂" {
-//            KeyboardViewController.showemojikeyboard.toggle()
-                   // Present emoji keyboard
-            
-               }
-        
+
         let suggestions = fakeSuggestions(for: text)
-        
-        // Schedule notification based on user's typing
-        if text.lowercased().hasPrefix("call") {
-            let name = text.components(separatedBy: "@").last?.trimmingCharacters(in: .whitespacesAndNewlines)
-            let contactNumber = suggestions.first?.subtitle ?? ""
-            NotificationManager.shared.scheduleNotification(type: "call", contactName: name, contactNumber: contactNumber)
-        } else if text.lowercased() == "meet" || text.lowercased() == "birthday" {
-            NotificationManager.shared.scheduleNotification(type: text.lowercased(), contactName: nil, contactNumber: nil)
-        }
         
         return suggestions.map {
             var suggestion = $0
@@ -145,25 +67,7 @@ class FakeAutocompleteProvider: AutocompleteProvider {
     }
 
     
-    private func getMatchingContacts(for namePrefix: String) throws -> [(fullName: String, contactNumber: String)] {
-        var matchingContacts: [(fullName: String, contactNumber: String)] = []
-        
-        let predicate = CNContact.predicateForContacts(matchingName: namePrefix)
-        let keysToFetch = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey] as [CNKeyDescriptor]
-        
-        let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keysToFetch)
-        
-        for contact in contacts {
-            let fullName = "\(contact.givenName) \(contact.familyName)"
-            if let phoneNumber = contact.phoneNumbers.first?.value.stringValue {
-                matchingContacts.append((fullName, phoneNumber))
-            } else {
-                matchingContacts.append((fullName, ""))
-            }
-        }
-        
-        return matchingContacts
-    }
+
 }
 
 private extension FakeAutocompleteProvider {

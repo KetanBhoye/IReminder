@@ -23,7 +23,7 @@ struct TodoListView: View {
             }
             .navigationTitle("Dashboard ")
             .navigationBarItems(trailing:
-                                    NavigationLink(destination: AddView(todo: Task(contact: ContactInfo(firstName: "", lastName: "")), todolistviewmodel: todolistviewmodel,selectedTab: $selectedTab)) {
+                                    NavigationLink(destination: AddView(todo: Task(contact: ContactInfo(firstName: "", lastName: "")), todolistviewmodel: todolistviewmodel,contact: ContactInfo(firstName: "", lastName: ""),selectedTab: $selectedTab)) {
                     Image(systemName: "plus")
                 
                 }

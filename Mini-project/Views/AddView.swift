@@ -1,22 +1,42 @@
 import SwiftUI
 import ContactsUI
 
+class KeyboardHandler: ObservableObject {
+    @Published private(set) var keyboardHeight: CGFloat = 0
 
+    init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            keyboardHeight = keyboardSize.height
+        }
+    }
+
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        keyboardHeight = 0
+    }
+}
 
 struct AddView: View {
     var reminderTypes = ["Birthday", "Meeting", "Call", "Custom"]
     @State var selectedReminderType = 0
     @State var todo: Task
     @ObservedObject var todolistviewmodel : TodoListViewModel
-    @State var contact: ContactInfo = ContactInfo(firstName: "", lastName: "")
+    @State var contact: ContactInfo
     @Binding var selectedTab : BottomBarSelectedTab
     @Environment(\.presentationMode) var presentationMode
+    
+    @StateObject private var keyboardHandler = KeyboardHandler()
+    @State private var keyboardHeight: CGFloat = 0
     
 var body: some View {
     
     
     
-        VStack(alignment: .leading, spacing: 20.0) {
+    VStack(spacing: 0) {
             HStack {
                 Text("Add ToDo")
                     .font(.title)
@@ -24,8 +44,14 @@ var body: some View {
                     .foregroundColor(.blue)
                 Spacer()
             }
-            .padding(.top, 20.0)
-
+            .padding(.top, 20)
+            .padding(.bottom, keyboardHeight)
+                .edgesIgnoringSafeArea(.bottom)
+                .navigationBarTitleDisplayMode(.inline)
+                .onReceive(keyboardHandler.$keyboardHeight) { height in
+                    keyboardHeight = height
+                }
+            
             // Picker for selecting reminder type
             Picker(selection: $selectedReminderType, label: Text("Reminder Type")) {
                 

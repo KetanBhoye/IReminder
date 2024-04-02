@@ -12,6 +12,8 @@ struct Mini_projectApp: App {
     var body: some Scene {
         WindowGroup {
             LoginSignUpView()
+            
+            
         }
     }
 }
@@ -26,6 +28,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         UNUserNotificationCenter.current().delegate = self // Set the delegate for handling notifications
         return true
     }
+
 
     func application(_ application: UIApplication,
                      open url: URL,
@@ -45,32 +48,65 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
         completionHandler([.banner, .sound, .badge]) // You can adjust the options based on your requirements
     }
+    
+    
+    // Search for contact with the given name
+      func findContact(withName name: String) -> ContactInfo? {
+          let contactStore = CNContactStore()
+          let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey] as [CNKeyDescriptor]
+          let predicate = CNContact.predicateForContacts(matchingName: name)
+          
+          do {
+              let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keys)
+              if let contact = contacts.first {
+                  let firstName = contact.givenName
+                  let lastName = contact.familyName
+                  let phoneNumber = contact.phoneNumbers.first?.value.stringValue
+                  return ContactInfo(firstName: firstName, lastName: lastName, phoneNumber: PhoneNumber(stringValue: phoneNumber ?? ""))
+              }
+          } catch {
+              print("Error fetching contact: \(error.localizedDescription)")
+          }
+          
+          return nil
+      }
 
+
+
+    
+    
     // Implement delegate method to handle user's interaction with notifications
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let identifier = response.notification.request.identifier
         let task = response.notification.request.content.userInfo
+        let contactName = response.notification.request.content.userInfo["contact"] as? String
+        
+        let receivedContact = findContact(withName: contactName ?? "Anna Haro")
+        
+        
+        
+     
 
         switch identifier {
         case "keyboardReminder_meet":
             print("User clicked on keyboardReminder_meet notification")
             // Code to open MeetingReminderInputView
             let rootViewController = UIApplication.shared.windows.first?.rootViewController
-            let addView = AddView(selectedReminderType: 1, todo: Task(type: 2, contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel, selectedTab: $selectedTab)
+            let addView = AddView(selectedReminderType: 1, todo: Task(type: 2, contact: receivedContact), todolistviewmodel: todolistviewmodel, contact: receivedContact!, selectedTab: $selectedTab)
             rootViewController?.present(UIHostingController(rootView: addView), animated: true)
 
         case "keyboardReminder_call":
             print("User clicked on keyboardReminder_call notification")
             // Code to open CallReminderInputView
             let rootViewController = UIApplication.shared.windows.first?.rootViewController
-            let addView = AddView(selectedReminderType: 2,todo: Task(type: 3, contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel, selectedTab: $selectedTab)
+            let addView = AddView(selectedReminderType: 2,todo: Task(type: 3, contact: receivedContact), todolistviewmodel: todolistviewmodel,contact: receivedContact!, selectedTab: $selectedTab)
             rootViewController?.present(UIHostingController(rootView: addView), animated: true)
 
         case "keyboardReminder_birthday":
             print("User clicked on keyboardReminder_birthday notification")
             // Code to open BirthdayReminderInputView
             let rootViewController = UIApplication.shared.windows.first?.rootViewController
-            let addView = AddView(selectedReminderType: 0,todo: Task(type: 1, contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel, selectedTab: $selectedTab)
+            let addView = AddView(selectedReminderType: 0,todo: Task(type: 1, contact: receivedContact), todolistviewmodel: todolistviewmodel,contact: receivedContact!, selectedTab: $selectedTab)
             rootViewController?.present(UIHostingController(rootView: addView), animated: true)
             
         case "Call":

@@ -18,6 +18,7 @@ struct BottomBar: View {
 
         HStack(spacing: 10){
             //Home
+            //Home
             Button {
                 selectedTab = .home
             } label: {
@@ -43,7 +44,7 @@ struct BottomBar: View {
                             VStack(spacing: 3){
                                 RoundedRectangle(cornerRadius: 30)
                                     .frame(width: 60,height: 60)
-                                    .foregroundColor(.purple)
+                                    .foregroundColor(.blue)
                                 
                             }
                             VStack(spacing: 3){
@@ -95,16 +96,16 @@ struct BottomBarButtonView: View {
         HStack(spacing: 10){
                 GeometryReader{
                     geo in
-                    VStack(spacing: UIDevice.isIPad ? 6 : 3){
+                    VStack(spacing: UIDevice.isIPad ? 6 : 1){
                         Rectangle()
                             .frame(height: 0)
                         Image(image)
                             .resizable()
                             .frame(width: UIDevice.isIPad ? 30 : 24,height: UIDevice.isIPad ? 30 : 24)
-                            .foregroundColor(isActive ? .purple : .gray)
+                            .foregroundColor(isActive ? .blue : .gray)
                         Text(text)
                             .font(.caption)
-                            .foregroundColor(isActive ? .purple : .gray)
+                            .foregroundColor(isActive ? .blue : .gray)
                     }
                 }
             

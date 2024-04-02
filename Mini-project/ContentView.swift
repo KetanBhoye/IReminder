@@ -67,7 +67,7 @@ struct ContentView: View {
             }
             
             if selectedTab == .plus{
-                AddView( todo: Task(type: 1, contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel,  selectedTab: $selectedTab)
+                AddView( todo: Task(type: 1, contact: ContactInfo(firstName: "name", lastName: "name")), todolistviewmodel: todolistviewmodel,contact: ContactInfo(firstName: "", lastName: ""),  selectedTab: $selectedTab)
                 Text("Add")
             }
             if selectedTab == .notification{

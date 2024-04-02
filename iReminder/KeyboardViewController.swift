@@ -9,7 +9,7 @@
 import KeyboardKit
 import SwiftUI
 import Contacts
-
+import UserNotifications
 
 struct ContactListView: View {
     var contacts: [String] // Assuming contacts are represented by strings
@@ -24,7 +24,7 @@ struct ContactListView: View {
                     }) {
                         Text(contact)
                             .padding(8)
-                            .background(Color.blue)
+                            .background(Color.gray)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
@@ -34,6 +34,8 @@ struct ContactListView: View {
         }
     }
 }
+
+
 /**
  This keyboard demonstrates how to setup KeyboardKit and how
  to customize the standard configuration.
@@ -47,22 +49,81 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
     @State var showemojikeyboard = false
     var contacts = [String]() // Will hold the fetched contacts data
      var searchText = ""
+     var typetext = ""
     
     
 
     
     func didChangeText(_ searchText: String) {
-            self.searchText = searchText
-            do {
-                contacts = try getMatchingContacts(searchText: searchText)
-            } catch {
-                print("Error fetching matching contacts: \(error.localizedDescription)")
-            }
+        var filteredSearchText = searchText
         
-        print(contacts)
+        if filteredSearchText.lowercased().starts(with: "call@") {
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-4))
+            filteredSearchText = String(filteredSearchText.dropFirst(5))
         }
+        if filteredSearchText.lowercased().starts(with: "meet@") {
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-4))
+            filteredSearchText = String(filteredSearchText.dropFirst(5))
+        }
+        if filteredSearchText.lowercased().starts(with: "birthday@") {
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-8))
+            filteredSearchText = String(filteredSearchText.dropFirst(9))
+        }
+        
+        self.searchText = filteredSearchText
+        
+        do {
+            contacts = try getMatchingContacts(searchText: filteredSearchText)
+        } catch {
+            print("Error fetching matching contacts: \(error.localizedDescription)")
+        }
+        
+        print(searchText)
+        print("typetext\(typetext)")
+        print(contacts)
+    }
     
+    func requestNotificationAuthorization() {
+         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+             if granted {
+                 print("Notification authorization granted.")
+             } else {
+                 print("Notification authorization denied.")
+             }
+         }
+     }
     
+    func scheduleNotification(type: String, contact: String) {
+          let content = UNMutableNotificationContent()
+          content.title = "iReminder"
+          content.userInfo = ["contact": contact]
+        
+
+
+          // Customize notification based on type
+          switch type {
+          case "call":
+              content.body = "Call reminder"
+          case "meet":
+              content.body = "Meeting reminder"
+          case "birthday":
+              content.body = "Birthday reminder"
+          default:
+              content.body = "Reminder"
+          }
+
+          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+          let identifier = "keyboardReminder_\(type)"
+          let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+          UNUserNotificationCenter.current().add(request) { error in
+              if let error = error {
+                  print("Error scheduling notification: \(error)")
+              } else {
+                  print("Notification scheduled successfully.")
+              }
+          }
+      }
     
     func fetchContacts() {
         let contactStore = CNContactStore()
@@ -89,7 +150,8 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
         /// The demo handler has custom code for tapping and
         /// long pressing image actions.
         ///
-  
+        // Request notification authorization
+                requestNotificationAuthorization()
         
         services.actionHandler = DemoActionHandler(
                 controller: self,
@@ -229,10 +291,13 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                             Text("🙂")
                         }
                         Spacer()
-                        ContactListView(contacts: self.contacts) { contact in
-                                                    print("Selected contact: \(contact)")
-                                                }
-                        
+                            
+                        ContactListView(contacts: self.contacts) { [self] contact in
+                            scheduleNotification(type: typetext.lowercased(), contact: contact)
+                                print("Selected contact: \(contact)")
+                                
+                            }
+                       
                     }.padding(5)
                     
                    
@@ -245,4 +310,5 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
     
     
 }
+
 // MARK: - EmojiKeyboard Integration

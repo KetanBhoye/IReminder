@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Contacts
 
 struct MissedReminder: Identifiable {
     var id = UUID()
@@ -17,6 +18,8 @@ struct MissedReminder: Identifiable {
 }
 
 struct MissedCallsView: View {
+    
+   
     var reminders: [MissedReminder] = [
         MissedReminder(type: "Missed Call", name: "Vijay Mali", time: "9:00 am", date: "TODAY, FEB 09 / 2024", icon: "phone.arrow.up.right"),
         MissedReminder(type: "Missed Call", name: "Vijay Mali", time: "9:00 am", date: "TODAY, FEB 09 / 2024", icon: "phone.arrow.up.right"),
@@ -31,6 +34,7 @@ struct MissedCallsView: View {
     var groupedReminders: [String: [MissedReminder]] {
         Dictionary(grouping: reminders, by: { $0.date })
     }
+    
 
     var body: some View {
         ZStack{
