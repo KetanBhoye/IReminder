@@ -5,9 +5,9 @@ import UIKit
 
 enum BottomBarSelectedTab:Int{
     case home = 0
-    case search = 1
+//    case search = 1
     case plus = 2
-    case notification = 3
+//    case notification = 3
     case profile = 4
 }
 struct BottomBar: View {
@@ -29,12 +29,12 @@ struct BottomBar: View {
             
             
             //Search
-            Button {
-                    selectedTab = .search
-                } label: {
-                    BottomBarButtonView(image: "magnifyingglass", text: "Search", isActive: selectedTab == .search)
-                }
-                
+//            Button {
+//                    selectedTab = .search
+//                } label: {
+//                    BottomBarButtonView(image: "magnifyingglass", text: "Search", isActive: selectedTab == .search)
+//                }
+//                
                 Button {
                     selectedTab = .plus
 
@@ -57,11 +57,11 @@ struct BottomBar: View {
                     }
                 }
                 //Notification
-                Button {
-                    selectedTab = .notification
-                } label: {
-                    BottomBarButtonView(image: "bell", text: "Notification", isActive: selectedTab == .notification)
-                }
+//                Button {
+//                    selectedTab = .notification
+//                } label: {
+//                    BottomBarButtonView(image: "bell", text: "Notification", isActive: selectedTab == .notification)
+//                }
                 //Profile
                 Button {
                     selectedTab = .profile

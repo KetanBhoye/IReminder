@@ -38,17 +38,17 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 
     // Implement delegate method to handle notifications when the app is in the foreground
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        let identifier = notification.request.identifier
-
-        if identifier == "callnotconn" {
-            print("Notification Title: \(notification.request.content.title)")
-        }
-        
-
-        completionHandler([.banner, .sound, .badge]) // You can adjust the options based on your requirements
-    }
-    
+//    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+//        let identifier = notification.request.identifier
+//
+//        if identifier == "callnotconn" {
+//            print("Notification Title: \(notification.request.content.title)")
+//        }
+//        
+//
+//        completionHandler([.banner, .sound, .badge]) // You can adjust the options based on your requirements
+//    }
+//    
     
     // Search for contact with the given name
       func findContact(withName name: String) -> ContactInfo? {
@@ -114,7 +114,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             // Code to open BirthdayReminderInputView
             let rootViewController = UIApplication.shared.windows.first?.rootViewController
             if let task1 = handleNotification(userInfo: task){
-//                
+//
 //                if let phoneNumber = task1.contact?.phoneNumber?.stringValue, !phoneNumber.isEmpty {
 //                    guard let number = URL(string: "tel://" + phoneNumber) else { return }
 //                    UIApplication.shared.open(number)

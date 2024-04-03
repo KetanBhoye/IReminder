@@ -17,9 +17,9 @@ class TodoListViewModel: ObservableObject {
 
         loadTasks()
 
-        let notificationDelegate = NotificationDelegate()
-
-        UNUserNotificationCenter.current().delegate = notificationDelegate
+//        let notificationDelegate = NotificationDelegate()
+//
+//        UNUserNotificationCenter.current().delegate = notificationDelegate
 
     }
 

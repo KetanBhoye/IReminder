@@ -1,24 +1,24 @@
 import SwiftUI
 import ContactsUI
 
-class KeyboardHandler: ObservableObject {
-    @Published private(set) var keyboardHeight: CGFloat = 0
-
-    init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-
-    @objc private func keyboardWillShow(_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            keyboardHeight = keyboardSize.height
-        }
-    }
-
-    @objc private func keyboardWillHide(_ notification: Notification) {
-        keyboardHeight = 0
-    }
-}
+//class KeyboardHandler: ObservableObject {
+//    @Published private(set) var keyboardHeight: CGFloat = 0
+//
+//    init() {
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+//    }
+//
+//    @objc private func keyboardWillShow(_ notification: Notification) {
+//        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+//            keyboardHeight = keyboardSize.height
+//        }
+//    }
+//
+//    @objc private func keyboardWillHide(_ notification: Notification) {
+//        keyboardHeight = 0
+//    }
+//}
 
 struct AddView: View {
     var reminderTypes = ["Birthday", "Meeting", "Call", "Custom"]
@@ -29,7 +29,7 @@ struct AddView: View {
     @Binding var selectedTab : BottomBarSelectedTab
     @Environment(\.presentationMode) var presentationMode
     
-    @StateObject private var keyboardHandler = KeyboardHandler()
+   // @StateObject private var keyboardHandler = KeyboardHandler()
     @State private var keyboardHeight: CGFloat = 0
     
 var body: some View {
@@ -48,10 +48,10 @@ var body: some View {
             .padding(.bottom, keyboardHeight)
                 .edgesIgnoringSafeArea(.bottom)
                 .navigationBarTitleDisplayMode(.inline)
-                .onReceive(keyboardHandler.$keyboardHeight) { height in
-                    keyboardHeight = height
-                }
-            
+//                .onReceive(keyboardHandler.$keyboardHeight) { height in
+//                    keyboardHeight = height
+//                }
+//            
             // Picker for selecting reminder type
             Picker(selection: $selectedReminderType, label: Text("Reminder Type")) {
                 
