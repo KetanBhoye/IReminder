@@ -51,7 +51,7 @@ var body: some View {
 //                .onReceive(keyboardHandler.$keyboardHeight) { height in
 //                    keyboardHeight = height
 //                }
-//            
+        ScrollView(){
             // Picker for selecting reminder type
             Picker(selection: $selectedReminderType, label: Text("Reminder Type")) {
                 
@@ -154,6 +154,8 @@ var body: some View {
 
             Spacer()
         }
+        }
+           
         .padding()
         .navigationBarTitleDisplayMode(.inline)
     }

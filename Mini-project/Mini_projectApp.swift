@@ -115,18 +115,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             let rootViewController = UIApplication.shared.windows.first?.rootViewController
             if let task1 = handleNotification(userInfo: task){
 //
-//                if let phoneNumber = task1.contact?.phoneNumber?.stringValue, !phoneNumber.isEmpty {
-//                    guard let number = URL(string: "tel://" + phoneNumber) else { return }
-//                    UIApplication.shared.open(number)
-//                }
-                let url = URL(string: "whatsapp://send?phone=\(task1.contact?.phoneNumber)&text=Hello")!
-                if UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                } else {
-                    // WhatsApp is not installed
-                    // You can handle this case as per your app's requirement
-                    print("WhatsApp is not installed on this device.")
+                if let phoneNumber = task1.contact?.phoneNumber?.stringValue, !phoneNumber.isEmpty {
+                    guard let number = URL(string: "tel://" + phoneNumber) else { return }
+                    UIApplication.shared.open(number)
                 }
+//                let url = URL(string: "whatsapp://send?phone=\(task1.contact?.phoneNumber)&text=Hello")!
+//                if UIApplication.shared.canOpenURL(url) {
+//                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//                } else {
+//                    // WhatsApp is not installed
+//                    // You can handle this case as per your app's requirement
+//                    print("WhatsApp is not installed on this device.")
+//                }
             }
             else {
                 print("Error in fetching the task from notifiaction")

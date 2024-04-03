@@ -23,10 +23,10 @@ struct ContactListView: View {
                         didSelectContact(contact)
                     }) {
                         Text(contact)
-                            .padding(.horizontal)
+                            .padding(8)
                             .background(Color.gray)
                             .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .cornerRadius(8)
                     }
                 }
             }
@@ -73,11 +73,12 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
             typetext = String(filteredSearchText.dropLast(filteredSearchText.count-1))
            
         }
+
         
         self.searchText = filteredSearchText
         
         do {
-            contacts = try getMatchingContacts(searchText: filteredSearchText)
+                contacts = try getMatchingContacts(searchText: filteredSearchText)
         } catch {
             print("Error fetching matching contacts: \(error.localizedDescription)")
         }
@@ -107,11 +108,11 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
           // Customize notification based on type
           switch type {
           case "call":
-              content.body = "Call to \(contact) ?"
+              content.body = "Call reminder"
           case "meet":
-              content.body = "Meet With \(contact) ?"
+              content.body = "Meeting reminder"
           case "birthday":
-              content.body = "Birthday reminder for \(contact)"
+              content.body = "Birthday reminder"
           default:
               content.body = "Reminder"
           }
@@ -128,27 +129,36 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
               }
           }
       }
-    
-    func fetchContacts() {
+
+    // Search for contact with the given name
+    func findContact(withName name: String) -> String? {
         let contactStore = CNContactStore()
-        let keys = [CNContactGivenNameKey, CNContactFamilyNameKey]
-        let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
+        let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey] as [CNKeyDescriptor]
+        let predicate = CNContact.predicateForContacts(matchingName: name)
         
         do {
-            try contactStore.enumerateContacts(with: request) { (contact, _) in
-                let fullName = "\(contact.givenName) \(contact.familyName)"
-                self.contacts.append(fullName)
+            let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keys)
+            if let contact = contacts.first {
+                if let phoneNumber = contact.phoneNumbers.first?.value.stringValue {
+                    return phoneNumber
+                }
             }
         } catch {
-            print("Error fetching contacts: \(error.localizedDescription)")
+            print("Error fetching contact: \(error.localizedDescription)")
         }
+        
+        return nil
     }
+
     
     /// This function is called when the controller loads.
     ///
     /// Here, we make demo-specific service keyboard configs.
     override func viewDidLoad() {
-        fetchContacts()
+      
+    
+            print(contacts)
+        
         /// 💡 Setup a demo-specific action handler.
         ///
         /// The demo handler has custom code for tapping and
@@ -246,21 +256,28 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
     }
     
     private func getMatchingContacts(searchText: String) throws -> [String] {
-           var matchingContacts: [String] = []
+        var matchingContacts: [String] = []
+        var count = 0
 
-           let predicate = CNContact.predicateForContacts(matchingName: searchText)
-           let keysToFetch = [CNContactGivenNameKey, CNContactFamilyNameKey] as [CNKeyDescriptor]
+        let predicate = CNContact.predicateForContacts(matchingName: searchText)
+        let keysToFetch = [CNContactGivenNameKey, CNContactFamilyNameKey] as [CNKeyDescriptor]
 
-           let contactStore = CNContactStore()
-           let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keysToFetch)
+        let contactStore = CNContactStore()
+        let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keysToFetch)
 
-           for contact in contacts {
-               let fullName = "\(contact.givenName) \(contact.familyName)"
-               matchingContacts.append(fullName)
-           }
+        for contact in contacts {
+            if count < 10 {
+                let fullName = "\(contact.givenName) \(contact.familyName)"
+                matchingContacts.append(fullName)
+                count += 1
+            } else {
+                break // Stops iteration once 10 matching contacts are fetched
+            }
+        }
 
-           return matchingContacts
-       }
+        return matchingContacts
+    }
+
 
 
     /// This function is called whenever the keyboard should
@@ -273,27 +290,7 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
     ///
     
     
-    // Search for contact with the given name
-      func findContact(withName name: String) -> String? {
-          let contactStore = CNContactStore()
-          let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey] as [CNKeyDescriptor]
-          let predicate = CNContact.predicateForContacts(matchingName: name)
-          
-          do {
-              let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keys)
-              if let contact = contacts.first {
-              
-                  let phoneNumber = contact.phoneNumbers.first?.value.stringValue
-                  
-                  return phoneNumber
-                  
-              }
-          } catch {
-              print("Error fetching contact: \(error.localizedDescription)")
-          }
-          
-          return nil
-      }
+    
     override func viewWillSetupKeyboard() {
         super.viewWillSetupKeyboard()
 
@@ -305,7 +302,7 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                 buttonContent: { $0.view },
                 buttonView: { $0.view.scaleEffect(0.70) },
                 emojiKeyboard: { $0.view },
-                toolbar: {_ in
+                toolbar: {_ in 
                     HStack {
                         
                         
@@ -322,10 +319,12 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                                     
                                                     
                                                  // Insert the phone number after "@"
-                                                 textDocumentProxy.deleteBackward(times: 5)
-                                                 if let phoneNumber = findContact(withName: contact) {
-                                                     textDocumentProxy.insertText(phoneNumber)
-                                                 }
+                                    textDocumentProxy.deleteBackward(times: 50)
+                                    if let phoneNumber = findContact(withName: contact) {
+                                        textDocumentProxy.insertText(phoneNumber)
+                                    }
+                                    
+                                
                                     
                                     
 //
@@ -336,6 +335,7 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                                     print("Selected contact: \(contact)")
                                 }
                             }
+                          
                                 
                             }
                        
