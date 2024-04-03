@@ -23,10 +23,10 @@ struct ContactListView: View {
                         didSelectContact(contact)
                     }) {
                         Text(contact)
-                            .padding(8)
+                            .padding(.horizontal)
                             .background(Color.gray)
                             .foregroundColor(.white)
-                            .cornerRadius(8)
+                            .cornerRadius(10)
                     }
                 }
             }
@@ -69,6 +69,10 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
             typetext = String(filteredSearchText.dropLast(filteredSearchText.count-8))
             filteredSearchText = String(filteredSearchText.dropFirst(9))
         }
+        if filteredSearchText.lowercased().starts(with: "@") {
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-1))
+           
+        }
         
         self.searchText = filteredSearchText
         
@@ -103,11 +107,11 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
           // Customize notification based on type
           switch type {
           case "call":
-              content.body = "Call reminder"
+              content.body = "Call to \(contact) ?"
           case "meet":
-              content.body = "Meeting reminder"
+              content.body = "Meet With \(contact) ?"
           case "birthday":
-              content.body = "Birthday reminder"
+              content.body = "Birthday reminder for \(contact)"
           default:
               content.body = "Reminder"
           }
@@ -269,7 +273,27 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
     ///
     
     
-    
+    // Search for contact with the given name
+      func findContact(withName name: String) -> String? {
+          let contactStore = CNContactStore()
+          let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey] as [CNKeyDescriptor]
+          let predicate = CNContact.predicateForContacts(matchingName: name)
+          
+          do {
+              let contacts = try contactStore.unifiedContacts(matching: predicate, keysToFetch: keys)
+              if let contact = contacts.first {
+              
+                  let phoneNumber = contact.phoneNumbers.first?.value.stringValue
+                  
+                  return phoneNumber
+                  
+              }
+          } catch {
+              print("Error fetching contact: \(error.localizedDescription)")
+          }
+          
+          return nil
+      }
     override func viewWillSetupKeyboard() {
         super.viewWillSetupKeyboard()
 
@@ -281,7 +305,7 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                 buttonContent: { $0.view },
                 buttonView: { $0.view.scaleEffect(0.70) },
                 emojiKeyboard: { $0.view },
-                toolbar: {_ in 
+                toolbar: {_ in
                     HStack {
                         
                         
@@ -293,8 +317,25 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                         Spacer()
                             
                         ContactListView(contacts: self.contacts) { [self] contact in
-                            scheduleNotification(type: typetext.lowercased(), contact: contact)
-                                print("Selected contact: \(contact)")
+                            if !typetext.isEmpty {
+                                if(typetext=="@"){
+                                    
+                                                    
+                                                 // Insert the phone number after "@"
+                                                 textDocumentProxy.deleteBackward(times: 5)
+                                                 if let phoneNumber = findContact(withName: contact) {
+                                                     textDocumentProxy.insertText(phoneNumber)
+                                                 }
+                                    
+                                    
+//
+
+                                }
+                                else{
+                                    scheduleNotification(type: typetext.lowercased(), contact: contact)
+                                    print("Selected contact: \(contact)")
+                                }
+                            }
                                 
                             }
                        
