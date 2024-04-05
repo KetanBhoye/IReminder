@@ -41,6 +41,9 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
     var typetext = ""
 
     
+    
+
+    
     private func scheduleBirthdayReminder(for contact: String) {
         let reminderStore = EKEventStore()
 

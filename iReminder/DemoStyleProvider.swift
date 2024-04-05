@@ -37,15 +37,17 @@ extension KeyboardViewController {
 
         private let emojiData: [String: [(String, ClosedRange<Int>)]] = [
             "😀": [("😀", 0x1F600...0x1F64F)],
-            "🐻": [("🐶", 0x1F400...0x1F4FF)],
-            "🍔": [("🍔", 0x1F344...0x1F37A)],
+            "🐻": [("🐶", 0x1f436...0x1F46F)],
+            "🍔": [("🍔", 0x1F330...0x1F37F)],
             "🚗": [("🚗", 0x1F680...0x1F6C0)],
             "⚽": [("⚽", 0x1F3C0...0x1F3FF)],
             "💻": [("💻", 0x1F300...0x1F5FF)],
             "🔣": [("🔣", 0x1F300...0x1F5FF)],
-            "🇮🇳": [("🇺🇸", 0x1F1E6...0x1F1F9)]
+           // "🇮🇳": [("🇺🇸", 0x1F1E6...0x1F1FF)],
+            "❤️": [("❤️", 0x2764...0x27BF)] // Range covering all heart emojis
         ]
-        
+
+
 
         override func viewDidLoad() {
             super.viewDidLoad()
