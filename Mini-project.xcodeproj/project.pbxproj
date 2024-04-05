@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C23340D2BBFBD4F0065FEFA /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 2C23340C2BBFBD4F0065FEFA /* Toast */; };
+		2C23340F2BBFBD8E0065FEFA /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 2C23340E2BBFBD8E0065FEFA /* Toast */; };
 		2C2A7DC62B85F8140062271E /* Notificationmanager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A7DC52B85F8140062271E /* Notificationmanager.swift */; };
 		2C64816F2B7BDDDC0092D497 /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C64816E2B7BDDDC0092D497 /* BottomBarView.swift */; };
 		2C6481712B7BDE510092D497 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6481702B7BDE510092D497 /* ContentView.swift */; };
@@ -140,6 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C23340D2BBFBD4F0065FEFA /* Toast in Frameworks */,
 				2C6C62F92BA6EC2400AAF23A /* KeyboardKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -151,6 +154,7 @@
 				2CDD12D02BBA6C2D0087BF62 /* KeyboardKit in Frameworks */,
 				2CAD7A5D2B77502200B40FFE /* GoogleSignIn in Frameworks */,
 				2CAD7A622B7750AA00B40FFE /* FirebaseAuth in Frameworks */,
+				2C23340F2BBFBD8E0065FEFA /* Toast in Frameworks */,
 				2CAD7A5F2B77502200B40FFE /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -342,6 +346,7 @@
 			name = iReminder;
 			packageProductDependencies = (
 				2C6C62F82BA6EC2400AAF23A /* KeyboardKit */,
+				2C23340C2BBFBD4F0065FEFA /* Toast */,
 			);
 			productName = iReminder;
 			productReference = 2C8082AF2BA2EECD00ADAE59 /* iReminder.appex */;
@@ -367,6 +372,7 @@
 				2CAD7A5E2B77502200B40FFE /* GoogleSignInSwift */,
 				2CAD7A612B7750AA00B40FFE /* FirebaseAuth */,
 				2CDD12CF2BBA6C2D0087BF62 /* KeyboardKit */,
+				2C23340E2BBFBD8E0065FEFA /* Toast */,
 			);
 			productName = "Mini-project";
 			productReference = 2CFF6EDF2B70C752005F7360 /* Mini-project.app */;
@@ -448,6 +454,7 @@
 				2CAD7A602B7750AA00B40FFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				2C842B4A2B7BB267006A4F1F /* XCRemoteSwiftPackageReference "SQLite" */,
 				2C6C62F72BA6EC2300AAF23A /* XCRemoteSwiftPackageReference "KeyboardKit" */,
+				2C23340B2BBFBD4F0065FEFA /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 			);
 			productRefGroup = 2CFF6EE02B70C752005F7360 /* Products */;
 			projectDirPath = "";
@@ -979,6 +986,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2C23340B2BBFBD4F0065FEFA /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
 		2C6C62F72BA6EC2300AAF23A /* XCRemoteSwiftPackageReference "KeyboardKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/KeyboardKit/KeyboardKit.git";
@@ -1014,6 +1029,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2C23340C2BBFBD4F0065FEFA /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C23340B2BBFBD4F0065FEFA /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
+		};
+		2C23340E2BBFBD8E0065FEFA /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C23340B2BBFBD4F0065FEFA /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
+		};
 		2C6C62F82BA6EC2400AAF23A /* KeyboardKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C6C62F72BA6EC2300AAF23A /* XCRemoteSwiftPackageReference "KeyboardKit" */;

@@ -11,6 +11,7 @@ import SwiftUI
 import Contacts
 import UserNotifications
 import EventKit
+import Toast
 
 struct ContactListView: View {
     var contacts: [String] // Assuming contacts are represented by strings
@@ -38,62 +39,62 @@ struct ContactListView: View {
 
 
 
+class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProviderDelegate {
+    @State var showemojikeyboard = false
+    var contacts = [String]() // Will hold the fetched contacts data
+    var searchText = ""
+    var typetext = ""
 
-///
-private func scheduleBirthdayReminder(for contact: String) {
-    let reminderStore = EKEventStore()
+    
+    private func scheduleBirthdayReminder(for contact: String) {
+        let reminderStore = EKEventStore()
 
-    reminderStore.requestAccess(to: .reminder) { (granted, error) in
-        if granted {
-            let reminder = EKReminder(eventStore: reminderStore)
-            reminder.title = "\(contact)'s Birthday"
-            reminder.notes = "Birthday reminder"
+        reminderStore.requestAccess(to: .reminder) { (granted, error) in
+            if granted {
+                let reminder = EKReminder(eventStore: reminderStore)
+                reminder.title = "\(contact)'s Birthday"
+                reminder.notes = "Birthday reminder"
 
-            var dateComponents = DateComponents()
-            dateComponents.year = Calendar.current.dateComponents([.year], from: Date()).year! + 1
-            dateComponents.month = Calendar.current.dateComponents([.month], from: Date()).month
-            dateComponents.day = Calendar.current.dateComponents([.day], from: Date()).day
-            reminder.dueDateComponents = dateComponents
+                var dateComponents = DateComponents()
+                dateComponents.year = Calendar.current.dateComponents([.year], from: Date()).year! + 1
+                dateComponents.month = Calendar.current.dateComponents([.month], from: Date()).month
+                dateComponents.day = Calendar.current.dateComponents([.day], from: Date()).day
+                reminder.dueDateComponents = dateComponents
 
-            reminder.calendar = reminderStore.defaultCalendarForNewReminders()
+                reminder.calendar = reminderStore.defaultCalendarForNewReminders()
 
-            do {
-                try reminderStore.save(reminder, commit: true)
-                print("Birthday reminder saved successfully.")
-            } catch {
-                print("Error saving birthday reminder: \(error.localizedDescription)")
-            }
-        } else {
-            if let error = error {
-                print("Access to Reminders denied: \(error.localizedDescription)")
+                do {
+                    try reminderStore.save(reminder, commit: true)
+                    print("Birthday reminder saved successfully.")
+
+                    // Show a toast message
+                    DispatchQueue.main.async {
+                        var style = ToastStyle()
+                                
+                                // Customize the toast appearance
+                                style.messageFont = .systemFont(ofSize: 16, weight: .semibold)
+                                style.messageColor = .white
+                                style.backgroundColor = UIColor(red: 0.2, green: 0.6, blue: 0.4, alpha: 1.0)
+                                style.cornerRadius = 20
+                                style.verticalPadding = 16
+                                style.horizontalPadding = 20
+
+
+                        self.view.makeToast("Birthday reminder for \(contact) has been added to the Reminders app.", duration: 3.0, position: .bottom, style: style)
+                    }
+                } catch {
+                    print("Error saving birthday reminder: \(error.localizedDescription)")
+                }
             } else {
-                print("Access to Reminders denied.")
+                if let error = error {
+                    print("Access to Reminders denied: \(error.localizedDescription)")
+                } else {
+                    print("Access to Reminders denied.")
+                }
             }
         }
     }
-}
-
-
-
-///
-
-/**
- This keyboard demonstrates how to setup KeyboardKit and how
- to customize the standard configuration.
-
- To use this keyboard, you must enable it in system settings
- ("Settings/General/Keyboards"). It needs full access to get
- access to features like haptic feedback.
- */
-class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProviderDelegate {
-
-    @State var showemojikeyboard = false
-    var contacts = [String]() // Will hold the fetched contacts data
-     var searchText = ""
-     var typetext = ""
     
-    
-
     
     func didChangeText(_ searchText: String) {
         var filteredSearchText = searchText
@@ -112,14 +113,12 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
         }
         if filteredSearchText.lowercased().starts(with: "@") {
             typetext = String(filteredSearchText.dropLast(filteredSearchText.count-1))
-           
         }
 
-        
         self.searchText = filteredSearchText
         
         do {
-                contacts = try getMatchingContacts(searchText: filteredSearchText)
+            contacts = try getMatchingContacts(searchText: filteredSearchText)
         } catch {
             print("Error fetching matching contacts: \(error.localizedDescription)")
         }
@@ -140,41 +139,57 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
      }
     
     func scheduleNotification(type: String, contact: String) {
-          let content = UNMutableNotificationContent()
-          content.title = "iReminder"
-          content.userInfo = ["contact": contact]
-        
+        switch type {
+        case "call":
+            scheduleCallReminder(for: contact)
+        case "meet":
+            scheduleMeetingReminder(for: contact)
+        case "birthday":
+            scheduleBirthdayReminder(for: contact)
+        default:
+            break
+        }
+    }
 
+    private func scheduleCallReminder(for contact: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "iReminder"
+        content.userInfo = ["contact": contact]
+        content.body = "Call \(contact)?"
 
-          // Customize notification based on type
-          switch type {
-          case "call":
-              content.body = "Call \(contact) ?"
-          case "meet":
-              content.body = "Meeting with \(contact) ?"
-          case "birthday":
-              content.body = "Birthday for \(contact)"
-              scheduleBirthdayReminder(for: contact)
-              
-          default:
-              content.body = "Reminder"
-          }
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let identifier = "keyboardReminder_call"
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
-          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-          let identifier = "keyboardReminder_\(type)"
-          let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error)")
+            } else {
+                print("Notification scheduled successfully.")
+            }
+        }
+    }
 
-          UNUserNotificationCenter.current().add(request) { error in
-              if let error = error {
-                  print("Error scheduling notification: \(error)")
-              } else {
-                  print("Notification scheduled successfully.")
-              }
-          }
-      }
+    private func scheduleMeetingReminder(for contact: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "iReminder"
+        content.userInfo = ["contact": contact]
+        content.body = "Meeting with \(contact)?"
 
-    // Search for contact with the given name
-    func findContact(withName name: String) -> String? {
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let identifier = "keyboardReminder_meet"
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error)")
+            } else {
+                print("Notification scheduled successfully.")
+            }
+        }
+    }
+
+    private func findContact(withName name: String) -> String? {
         let contactStore = CNContactStore()
         let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey] as [CNKeyDescriptor]
         let predicate = CNContact.predicateForContacts(matchingName: name)
@@ -193,109 +208,47 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
         return nil
     }
 
-    
-    /// This function is called when the controller loads.
-    ///
-    /// Here, we make demo-specific service keyboard configs.
     override func viewDidLoad() {
-      
-    
-            print(contacts)
-        
-        /// 💡 Setup a demo-specific action handler.
-        ///
-        /// The demo handler has custom code for tapping and
-        /// long pressing image actions.
-        ///
-        // Request notification authorization
-                requestNotificationAuthorization()
+        super.viewDidLoad()
+        print(contacts)
+        requestNotificationAuthorization()
         
         services.actionHandler = DemoActionHandler(
-                controller: self,
-                keyboardContext: state.keyboardContext,
-                keyboardBehavior: services.keyboardBehavior,
-                autocompleteContext: state.autocompleteContext,
-                feedbackConfiguration: state.feedbackConfiguration,
-                spaceDragGestureHandler: services.spaceDragGestureHandler)
-        
-        /// 💡 Setup a fake autocomplete provider.
-        ///
-        /// This fake provider will provide fake suggestions.
-        /// Try the Pro demo for real suggestions.
-        services.autocompleteProvider = FakeAutocompleteProvider(
-            context: state.autocompleteContext
+            controller: self,
+            keyboardContext: state.keyboardContext,
+            keyboardBehavior: services.keyboardBehavior,
+            autocompleteContext: state.autocompleteContext,
+            feedbackConfiguration: state.feedbackConfiguration,
+            spaceDragGestureHandler: services.spaceDragGestureHandler
         )
         
-        /// 💡 Setup a demo-specific callout action provider.
-        ///
-        /// The demo provider adds "keyboard" callout action
-        /// buttons to the "k" key.
+        services.autocompleteProvider = FakeAutocompleteProvider(context: state.autocompleteContext)
+       
+        
         services.calloutActionProvider = StandardCalloutActionProvider(
             keyboardContext: state.keyboardContext,
-            baseProvider: DemoCalloutActionProvider())
+            baseProvider: DemoCalloutActionProvider()
+        )
         
-        /// 💡 Setup a demo-specific layout provider.
-        ///
-        /// The demo provider adds a "next locale" button if
-        /// needed, as well as a rocket emoji button.
         services.layoutProvider = DemoLayoutProvider()
+        services.styleProvider = DemoStyleProvider(keyboardContext: state.keyboardContext)
         
-        /// 💡 Setup a demo-specific style provider.
-        ///
-        /// The demo provider styles the rocket emoji button
-        /// and has some commented out code that you can try.
-        services.styleProvider = DemoStyleProvider(
-            keyboardContext: state.keyboardContext)
-        
-
-        /// 💡 Setup a custom keyboard locale.
-        ///
-        /// Without KeyboardKit Pro, changing locale will by
-        /// default only affects localized texts.
         state.keyboardContext.setLocale(.english)
-
-        /// 💡 Add more locales to the keyboard.
-        ///
-        /// The demo layout provider will add a "next locale"
-        /// button if you have more than one locale.
         state.keyboardContext.localePresentationLocale = .current
-        state.keyboardContext.locales = [] // KeyboardLocale.all.locales
-        
-        /// 💡 Setup a custom dictation key replacement.
-        ///
-        /// Since dictation is not available by default, the
-        /// dictation button is removed if we don't set this.
+        state.keyboardContext.locales = []
         state.keyboardContext.keyboardDictationReplacement = .character("😀")
-        
-        /// 💡 Configure the space long press behavior.
-        ///
-        /// The locale context menu will only open up if the
-        /// keyboard has multiple locales.
         state.keyboardContext.spaceLongPressBehavior = .moveInputCursor
-        // state.keyboardContext.spaceLongPressBehavior = .openLocaleContextMenu
         
-        /// 💡 Setup audio and haptic feedback.
-        ///
-        /// The code below enabled haptic feedback and plays
-        /// a rocket sound when a rocket button is tapped.
         state.feedbackConfiguration.isHapticFeedbackEnabled = true
         state.feedbackConfiguration.audio.actions = [
             .init(action: .character("🙂"), feedback: .none)
         ]
         
-        
-        // state.feedbackConfiguration.disableAudioFeedback()
-        // state.feedbackConfiguration.disableHapticFeedback()
-        
-        /// 💡 Call super to perform the base initialization.
         super.viewDidLoad()
         
         let autocompleteProvider = FakeAutocompleteProvider(context: state.autocompleteContext)
-            autocompleteProvider.delegate = self
-            services.autocompleteProvider = autocompleteProvider
-        
-        
-        
+        autocompleteProvider.delegate = self
+        services.autocompleteProvider = autocompleteProvider
     }
     
     private func getMatchingContacts(searchText: String) throws -> [String] {
@@ -321,23 +274,9 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
         return matchingContacts
     }
 
-
-
-    /// This function is called whenever the keyboard should
-    /// be created or updated.
-    ///
-    /// Here, we just create a standard system keyboard like
-    /// the library does it, just to show how it's done. You
-    /// can customize anything you want.
-    ///
-    ///
-    
-    
-    
     override func viewWillSetupKeyboard() {
         super.viewWillSetupKeyboard()
 
-        /// 💡 Make the demo use a standard ``SystemKeyboard``.
         setup { controller in
             SystemKeyboard(
                 state: controller.state,
@@ -345,54 +284,31 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                 buttonContent: { $0.view },
                 buttonView: { $0.view.scaleEffect(0.70) },
                 emojiKeyboard: { $0.view },
-                toolbar: {_ in 
+                toolbar: { _ in
                     HStack {
-                        
-                        
                         Button(action: {
                             self.presentEmojiKeyboard()
                         }) {
                             Text("🙂")
                         }
                         Spacer()
-                            
                         ContactListView(contacts: self.contacts) { [self] contact in
                             if !typetext.isEmpty {
-                                if(typetext=="@"){
-                                    
-                                                    
-                                                 // Insert the phone number after "@"
+                                if typetext == "@" {
                                     textDocumentProxy.deleteBackward(times: 50)
                                     if let phoneNumber = findContact(withName: contact) {
                                         textDocumentProxy.insertText(phoneNumber)
                                     }
-                                    
-                                
-                                    
-                                    
-//
-
-                                }
-                                else{
+                                } else {
                                     scheduleNotification(type: typetext.lowercased(), contact: contact)
                                     print("Selected contact: \(contact)")
                                 }
                             }
-                          
-                                
-                            }
-                       
-                    }.padding(5)
-                    
-                   
-
+                        }
+                    }
+                    .padding(5)
                 }
             )
-            // .autocorrectionDisabled()
         }
     }
-    
-    
 }
-
-// MARK: - EmojiKeyboard Integration
