@@ -55,6 +55,11 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
                 dateComponents.month = Calendar.current.dateComponents([.month], from: Date()).month
                 dateComponents.day = Calendar.current.dateComponents([.day], from: Date()).day
                 reminder.dueDateComponents = dateComponents
+                
+                
+                // Create a recurrence rule to repeat annually
+                            let recurrenceRule = EKRecurrenceRule(recurrenceWith: .yearly, interval: 1, end: nil)
+                            reminder.recurrenceRules = [recurrenceRule]
 
                 reminder.calendar = reminderStore.defaultCalendarForNewReminders()
 
