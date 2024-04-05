@@ -1,10 +1,5 @@
 //
 //  KeyboardViewController.swift
-//  Keyboard
-//
-//  Created by Daniel Saidi on 2021-02-11.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
-//
 
 import KeyboardKit
 import SwiftUI
@@ -98,31 +93,39 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
     
     func didChangeText(_ searchText: String) {
         var filteredSearchText = searchText
-        
+        var contactsToDisplay: [String] = []
+
         if filteredSearchText.lowercased().starts(with: "call@") {
-            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-4))
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count - 4))
             filteredSearchText = String(filteredSearchText.dropFirst(5))
         }
         if filteredSearchText.lowercased().starts(with: "meet@") {
-            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-4))
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count - 4))
             filteredSearchText = String(filteredSearchText.dropFirst(5))
         }
         if filteredSearchText.lowercased().starts(with: "birthday@") {
-            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-8))
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count - 8))
             filteredSearchText = String(filteredSearchText.dropFirst(9))
+            if !filteredSearchText.isEmpty {
+                contactsToDisplay = [filteredSearchText]
+            }
         }
         if filteredSearchText.lowercased().starts(with: "@") {
-            typetext = String(filteredSearchText.dropLast(filteredSearchText.count-1))
+            typetext = String(filteredSearchText.dropLast(filteredSearchText.count - 1))
         }
 
         self.searchText = filteredSearchText
-        
-        do {
-            contacts = try getMatchingContacts(searchText: filteredSearchText)
-        } catch {
-            print("Error fetching matching contacts: \(error.localizedDescription)")
+
+        if !contactsToDisplay.isEmpty {
+            contacts = contactsToDisplay
+        } else {
+            do {
+                contacts = try getMatchingContacts(searchText: filteredSearchText)
+            } catch {
+                print("Error fetching matching contacts: \(error.localizedDescription)")
+            }
         }
-        
+
         print(searchText)
         print("typetext\(typetext)")
         print(contacts)

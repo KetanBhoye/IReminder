@@ -27,7 +27,6 @@
 		2C9DFDA12BB42A0100910F4F /* DemoLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DFDA02BB42A0100910F4F /* DemoLayoutProvider.swift */; };
 		2C9DFDA32BB42A1700910F4F /* DemoStyleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DFDA22BB42A1700910F4F /* DemoStyleProvider.swift */; };
 		2C9DFDA52BB42A2700910F4F /* FakeAutocompleteProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DFDA42BB42A2700910F4F /* FakeAutocompleteProvider.swift */; };
-		2C9DFDA72BB42A4000910F4F /* InputTextIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DFDA62BB42A4000910F4F /* InputTextIdentifier.swift */; };
 		2CAD7A5D2B77502200B40FFE /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2CAD7A5C2B77502200B40FFE /* GoogleSignIn */; };
 		2CAD7A5F2B77502200B40FFE /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2CAD7A5E2B77502200B40FFE /* GoogleSignInSwift */; };
 		2CAD7A622B7750AA00B40FFE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2CAD7A612B7750AA00B40FFE /* FirebaseAuth */; };
@@ -111,7 +110,6 @@
 		2C9DFDA02BB42A0100910F4F /* DemoLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLayoutProvider.swift; sourceTree = "<group>"; };
 		2C9DFDA22BB42A1700910F4F /* DemoStyleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoStyleProvider.swift; sourceTree = "<group>"; };
 		2C9DFDA42BB42A2700910F4F /* FakeAutocompleteProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeAutocompleteProvider.swift; sourceTree = "<group>"; };
-		2C9DFDA62BB42A4000910F4F /* InputTextIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextIdentifier.swift; sourceTree = "<group>"; };
 		2CAD7A672B77550700B40FFE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2CAD7A6B2B77552D00B40FFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2CB05DA62BB5767700AD2FC4 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
@@ -202,7 +200,6 @@
 				2C9DFDA02BB42A0100910F4F /* DemoLayoutProvider.swift */,
 				2C9DFDA22BB42A1700910F4F /* DemoStyleProvider.swift */,
 				2C9DFDA42BB42A2700910F4F /* FakeAutocompleteProvider.swift */,
-				2C9DFDA62BB42A4000910F4F /* InputTextIdentifier.swift */,
 			);
 			path = iReminder;
 			sourceTree = "<group>";
@@ -514,7 +511,6 @@
 				2C9DFDA32BB42A1700910F4F /* DemoStyleProvider.swift in Sources */,
 				2C9DFD9D2BB429CF00910F4F /* DemoActionHandler.swift in Sources */,
 				2C9DFD9F2BB429EE00910F4F /* DemoCalloutActionProvider.swift in Sources */,
-				2C9DFDA72BB42A4000910F4F /* InputTextIdentifier.swift in Sources */,
 				2C9DFDA52BB42A2700910F4F /* FakeAutocompleteProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
