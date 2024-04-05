@@ -10,6 +10,7 @@ import KeyboardKit
 import SwiftUI
 import Contacts
 import UserNotifications
+import EventKit
 
 struct ContactListView: View {
     var contacts: [String] // Assuming contacts are represented by strings
@@ -35,6 +36,46 @@ struct ContactListView: View {
     }
 }
 
+
+
+
+///
+private func scheduleBirthdayReminder(for contact: String) {
+    let reminderStore = EKEventStore()
+
+    reminderStore.requestAccess(to: .reminder) { (granted, error) in
+        if granted {
+            let reminder = EKReminder(eventStore: reminderStore)
+            reminder.title = "\(contact)'s Birthday"
+            reminder.notes = "Birthday reminder"
+
+            var dateComponents = DateComponents()
+            dateComponents.year = Calendar.current.dateComponents([.year], from: Date()).year! + 1
+            dateComponents.month = Calendar.current.dateComponents([.month], from: Date()).month
+            dateComponents.day = Calendar.current.dateComponents([.day], from: Date()).day
+            reminder.dueDateComponents = dateComponents
+
+            reminder.calendar = reminderStore.defaultCalendarForNewReminders()
+
+            do {
+                try reminderStore.save(reminder, commit: true)
+                print("Birthday reminder saved successfully.")
+            } catch {
+                print("Error saving birthday reminder: \(error.localizedDescription)")
+            }
+        } else {
+            if let error = error {
+                print("Access to Reminders denied: \(error.localizedDescription)")
+            } else {
+                print("Access to Reminders denied.")
+            }
+        }
+    }
+}
+
+
+
+///
 
 /**
  This keyboard demonstrates how to setup KeyboardKit and how
@@ -108,11 +149,13 @@ class KeyboardViewController: KeyboardInputViewController, FakeAutocompleteProvi
           // Customize notification based on type
           switch type {
           case "call":
-              content.body = "Call reminder"
+              content.body = "Call \(contact) ?"
           case "meet":
-              content.body = "Meeting reminder"
+              content.body = "Meeting with \(contact) ?"
           case "birthday":
-              content.body = "Birthday reminder"
+              content.body = "Birthday for \(contact)"
+              scheduleBirthdayReminder(for: contact)
+              
           default:
               content.body = "Reminder"
           }
