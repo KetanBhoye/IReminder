@@ -20,18 +20,32 @@ class TodoListViewModel: ObservableObject {
    
     func observeRemindersForUser() {
         guard let userId = Auth.auth().currentUser?.uid else {
+            // Clear tasks and local storage when user logs out
+            tasks = []
+            clearLocalStorage()
             return
         }
-       
+
         let remindersRef = database.child("users").child(userId).child("reminders")
-        remindersRefHandle = remindersRef.observe(.childAdded) { [weak self] snapshot in
+        remindersRefHandle = remindersRef.observe(.value) { [weak self] snapshot in
             guard let self = self else { return }
-            if let taskData = snapshot.value as? [String: Any] {
-                self.handleNewTask(taskData, fromFirebase: true)
+            self.tasks = [] // Clear the tasks array
+
+            if let snapshotValue = snapshot.value as? [String: Any] {
+                for (_, taskData) in snapshotValue {
+                    if let taskData = taskData as? [String: Any] {
+                        self.handleNewTask(taskData, fromFirebase: true)
+                    }
+                }
+                self.saveTasks() // Save tasks to local storage
             }
         }
     }
-   
+
+    private func clearLocalStorage() {
+        let userDefaultsKey = Bundle.main.bundleIdentifier ?? "YourAppIdentifier.Tasks"
+        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+    }
     func handleNewTask(_ taskData: [String: Any], fromFirebase: Bool) {
         guard let id = taskData["id"] as? String,
               let firebaseId = taskData["firebaseId"] as? String,
@@ -112,16 +126,16 @@ class TodoListViewModel: ObservableObject {
    
     func removeTasks(at indices: IndexSet) {
         // Get the tasks to be removed
-        let tasksToRemove = indices.map { tasks[$0] }
-       
+        let tasksToRemove = indices.compactMap { tasks[$0] }
+        
         // Remove tasks from Firebase Realtime Database
         guard let userId = Auth.auth().currentUser?.uid else {
             return
         }
-       
+        
         let databaseRef = database.child("users").child(userId).child("reminders")
         let tasksToRemoveIds = tasksToRemove.compactMap { $0.firebaseId }
-       
+        
         for taskId in tasksToRemoveIds {
             let taskRef = databaseRef.child(taskId)
             taskRef.removeValue { error, _ in
@@ -133,9 +147,13 @@ class TodoListViewModel: ObservableObject {
                 }
             }
         }
-       
-        // Remove tasks locally and save changes
-        tasks.remove(atOffsets: indices)
+        
+        // Remove tasks locally
+        tasks = tasks.filter { task in
+            return !tasksToRemove.contains(where: { $0.id == task.id })
+        }
+        
+        // Save changes to local storage
         saveTasks()
     }
    
