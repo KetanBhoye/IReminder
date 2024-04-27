@@ -16,14 +16,8 @@ class DemoCalloutActionProvider: BaseCalloutActionProvider {
         switch char {
         case "k": String("keyboard".reversed())
         default: super.calloutActionString(for: char)
+            
         }
-        
-     
-   
-        
-        
-        
-        
     }
     
 }

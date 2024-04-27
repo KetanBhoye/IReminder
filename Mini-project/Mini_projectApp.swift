@@ -8,10 +8,17 @@ import Contacts
 @main
 struct Mini_projectApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-
+    
+   
+    init() {
+            FirebaseApp.configure()
+        
+        }
     var body: some Scene {
         WindowGroup {
             LoginSignUpView()
+            
+            
             
             
         }
@@ -24,7 +31,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        FirebaseApp.configure()
+       // FirebaseApp.configure()
         UNUserNotificationCenter.current().delegate = self // Set the delegate for handling notifications
         return true
     }
